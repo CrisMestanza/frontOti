@@ -4,58 +4,9 @@
 
 import styles from './Dashboard.module.css';
 import SideNav from '../../components/SideNav';
+import TopNav from '../../components/TopNav';
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-// sidebar de arriba
-function TopNav() {
-<SideNav />
-  return (
-    <nav className={styles.topNav}>
-      <div className={styles.topNavInner}>
-        <div className={styles.topNavLeft}>
-          <a href="#" className={styles.logo}>UNSM Intranet</a>
-          <div className={styles.topNavLinks} style={{ display: 'none', gap: '1.5rem', marginLeft: '2rem' }}
-            // Se muestra en md+ via CSS del módulo si agregas breakpoint; aquí se oculta en móvil
-          >
-            <a href="#" className={styles.topNavLinkActive}>Dashboard</a>
-            <a href="#" className={styles.topNavLink}>Courses</a>
-            <a href="#" className={styles.topNavLink}>News</a>
-          </div>
-          {/* Links visibles solo md+ */}
-          <div className={styles.topNavLinks}>
-            <a href="#" className={styles.topNavLinkActive}>Dashboard</a>
-            <a href="#" className={styles.topNavLink}>Courses</a>
-            <a href="#" className={styles.topNavLink}>News</a>
-          </div>
-        </div>
-
-        <div className={styles.topNavRight}>
-          <div className={styles.searchWrapper}>
-            <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
-            <input
-              type="text"
-              className={styles.searchInput}
-              placeholder="Search resources..."
-            />
-          </div>
-          <button className={styles.iconBtn}>
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className={styles.iconBtn}>
-            <span className="material-symbols-outlined">settings</span>
-          </button>
-          <div className={styles.avatar}>
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbkZ6AKnZBP8dM_MRyXY-BhReIl9-X2ip9Bw74ehlvD8-FpcEkiqVRL5Cc3ykUweQ_EsmKpgr4sYPBm8_gtd9ZdMoXbpEhdrdljXnxrJMKO6lXppIFtR6va7lAySyA05_yEuvRE_3U0ssPo_-5bYiyf_E--Tu4M57u6GJCuTseIk0Bjn_I_nV8piVNUsz3cSWI7GXtCXM8upwUunfn-Z8vAseglWhYpDX6dcYJ5qfQ7LVhe2L1gTO-iZ0-WlJjev5gQo_5BdHpirI"
-              alt="Foto de perfil"
-            />
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
-// fin de sidebar de arriba
 
 
 function WelcomeBanner() {
@@ -112,7 +63,6 @@ function MobileNav() {
 export default function Dashboard() {
   return (
     <>
-      {/* Google Fonts (si tu proyecto no los carga globalmente) */}
       <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
         rel="stylesheet"

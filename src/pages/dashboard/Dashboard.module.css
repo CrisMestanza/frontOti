@@ -7,116 +7,6 @@
   color: #191c1d;
   min-height: 100vh;
 }
-
-/* ── Top Nav ── */
-.topNav {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 50;
-  height: 64px;
-  box-shadow: 0 12px 32px rgba(25, 28, 29, 0.06);
-}
-
-.topNavInner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem;
-  height: 64px;
-  max-width: 1920px;
-  margin: 0 auto;
-}
-
-.logo {
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  color: #15803d;
-  text-decoration: none;
-}
-
-.topNavLinks {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-left: 2rem;
-}
-
-.topNavLinkActive {
-  color: #15803d;
-  font-weight: 700;
-  border-bottom: 2px solid #15803d;
-  padding: 1rem 0;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.topNavLink {
-  color: #52525b;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-}
-
-.topNavLink:hover {
-  background: #f4f4f5;
-}
-
-.topNavLeft {
-  display: flex;
-  align-items: center;
-}
-
-.topNavRight {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.searchWrapper {
-  position: relative;
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .searchWrapper {
-    display: block;
-  }
-}
-
-.searchIcon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6e7a6c;
-  font-size: 1.2rem;
-  pointer-events: none;
-}
-
-.searchInput {
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
-  background: #edeeef;
-  border: none;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  width: 256px;
-  outline: none;
-  font-family: 'Manrope', sans-serif;
-  transition: box-shadow 0.2s;
-}
-
-.searchInput:focus {
-  box-shadow: 0 0 0 2px #006b2a;
-}
-
 .iconBtn {
   background: none;
   border: none;
@@ -270,7 +160,6 @@
 }
 
 .contentInner {
-  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

@@ -1,0 +1,145 @@
+.container {
+  border-radius: 24px;
+  padding: 30px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(16,185,129,0.08);
+}
+
+/* TITULO */
+.title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #065f46;
+}
+
+/* FILTROS */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.filters input,
+.filters select {
+  padding: 13px;
+  border-radius: 14px;
+  border: 1px solid #d1fae5;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.filters input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: #10b981;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+  transform: scale(1.02);
+}
+
+/* TABLA */
+
+.tableContainer {
+  border-radius: 20px;
+  overflow: hidden;          /* importante para que se vean las esquinas redondeadas */
+  border: 1px solid #ccc;    /* borde de la tabla */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* opcional, para que se vea más bonito */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+    border-radius: 20px !important;
+
+}
+.logo_unsm{
+  width: 50px !important  ;
+  height: 50px !important ;
+}
+.noData{
+  text-align: center;
+}
+
+/* HEADER */
+.table thead {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+
+}
+
+.table th {
+  padding: 16px;
+  font-weight: 600;
+}
+
+/* CELDAS */
+.table td {
+  padding: 15px;
+}
+
+/* FILAS */
+.table tbody tr {
+  border-bottom: 1px solid #ecfdf5;
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: #ecfdf5;
+  transform: scale(1.01);
+}
+
+/* BADGES */
+.badgeActive {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badgeDone {
+  background: #bbf7d0;
+  color: #166534;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+/* ACCIONES */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* BOTON VER */
+.btnView {
+  background: #d1fae5;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btnView:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* BOTON EDIT */
+.btnEdit {
+  background: #bbf7d0;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btnEdit:hover {
+  background: #059669;
+  color: white;
+}
