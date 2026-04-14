@@ -29,7 +29,6 @@ function MobileNav() {
   );
 }
 
-// 🔹 MAIN COMPONENT
 export default function BecasComedor() {
 
   const [data, setData] = useState([]);
@@ -41,7 +40,6 @@ export default function BecasComedor() {
   const [ciclo, setCiclo] = useState('');
   const [periodo, setPeriodo] = useState('');
 
-  // 🔥 CARGAR PERIODOS
   useEffect(() => {
     fetch('http://192.168.160.168:8080/api/getPeriodo/')
       .then(res => res.json())
@@ -49,7 +47,6 @@ export default function BecasComedor() {
       .catch(err => console.error(err));
   }, []);
 
-  // 🔥 FETCH DATA
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -97,6 +94,84 @@ export default function BecasComedor() {
 
     return `${partes[0]}-${mapa[partes[1]] || partes[1]}`;
   };
+const cambiarEstado = async (item) => {
+  const dni = item.entidad_estudiante?.dni;
+  const periodo = convertirARomano(item.entidad_periodo?.nombre);
+  const programa = item.entidad_bienestar?.programa || '';
+  let sede = item.entidad_estudiante?.sede || '';
+
+  if (sede.toLowerCase().includes('sede morales')) {
+    sede = 'TARAPOTO';
+  } else {
+    sede = sede.replace(/filial\s*/i, '').trim().toUpperCase();
+  }
+
+  // 🔹 OBTENER BECA
+  let beca = '';
+  const progLower = programa.toLowerCase();
+
+  if (/semi[-\s]?beca/.test(progLower)) {
+    beca = 'SEMI-BECA';
+  } else if (/beca/.test(progLower)) {
+    beca = 'BECA';
+  }
+
+  // 🔥 CONVERTIR ESTADO (0,1,2 → texto)
+  let estadoTexto = 'pendiente';
+
+  if (item.entidad_estudiante?.estado === 0) {
+    estadoTexto = 'aprobado'; // de pendiente pasa a aprobado
+  } else if (
+    item.entidad_estudiante?.estado === 1 ||
+    item.entidad_estudiante?.estado === 2
+  ) {
+    estadoTexto = 'pendiente'; // aprobado o denegado → pendiente
+  }
+
+  const body = {
+    dni,
+    periodo,
+    sede,
+    beca,
+    estado: estadoTexto
+  };
+
+  try {
+    const res = await fetch('http://192.168.160.168:8080/api/cambioEstado/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Estado actualizado',
+        text: `Nuevo estado: ${estadoTexto}`,
+        confirmButtonColor: '#16a34a'
+      }).then(() => {
+        window.location.reload(); // 🔥 recarga como tú quieres
+      });
+
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data?.mensaje || 'Error al actualizar',
+        confirmButtonColor: '#dc2626'
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error de conexión'
+    });
+  }
+};
 const enviarDatos = async (item) => {
   const dni = item.entidad_estudiante?.dni;
   const periodo = convertirARomano(item.entidad_periodo?.nombre);
@@ -129,28 +204,34 @@ const enviarDatos = async (item) => {
 
     const data = await res.json();
 
-    if (data?.mensaje === "Los datos ya fueron actualizados") {
-      Swal.fire({
-        icon: 'info',
-        title: 'Ya actualizado',
-        text: data.mensaje,
-        confirmButtonColor: '#16a34a'
-      });
-    } else if (res.ok) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Éxito',
-        text: 'Correos enviados correctamente',
-        confirmButtonColor: '#16a34a'
-      });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: data?.mensaje || 'Ocurrió un error',
-        confirmButtonColor: '#dc2626'
-      });
-    }
+if (data?.mensaje === "Los datos ya fueron actualizados") {
+  Swal.fire({
+    icon: 'info',
+    title: 'Ya actualizado',
+    text: data.mensaje,
+    confirmButtonColor: '#16a34a'
+  }).then(() => {
+    window.location.reload(); // 🔥 recarga después del alert
+  });
+
+} else if (res.ok) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Éxito',
+    text: 'Correos enviados correctamente',
+    confirmButtonColor: '#16a34a'
+  }).then(() => {
+    window.location.reload(); // 🔥 recarga después del alert
+  });
+
+} else {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: data?.mensaje || 'Ocurrió un error',
+    confirmButtonColor: '#dc2626'
+  });
+}
 
   } catch (error) {
     console.error(error);
@@ -231,6 +312,8 @@ const enviarDatos = async (item) => {
                     <th>Nombre</th>
                     <th>Ciclo</th>
                     <th>Periodo</th>
+                    <th>Estado</th>
+
                     <th>Programa</th>
                     <th>Acciones</th>
                   </tr>
@@ -260,7 +343,15 @@ const enviarDatos = async (item) => {
                           <td>{est?.ciclo_estudiante}</td>
                           <td>{convertirARomano(per?.nombre)}</td>
                           <td>{prog?.programa}</td>
-
+<td>
+  {est?.estado === 0
+    ? 'Pendiente'
+    : est?.estado === 1
+    ? 'Aprobado'
+    : est?.estado === 2
+    ? 'Denegado'
+    : 'Desconocido'}
+</td>
                           <td className={styles1.actions}>
                             {!esSemi && !esBeca ? (
                               <span className={styles1.noComedor}>
@@ -276,6 +367,18 @@ const enviarDatos = async (item) => {
                                 {esSemi ? 'Cambiar a BECA' : 'Cambiar a SEMI-BECA'}
                               </button>
                             )}
+<button
+  className={styles1.btnAction}
+  onClick={() => cambiarEstado(item)}
+>
+  {est?.estado === 0
+    ? 'Cambiar a Aprobado'
+    : est?.estado === 1
+    ? 'Cambiar a Pendiente'
+    : est?.estado === 2
+    ? 'Cambiar a Pendiente'
+    : 'Cambiar Estado'}
+</button>
                           </td>
                         </tr>
                       );
