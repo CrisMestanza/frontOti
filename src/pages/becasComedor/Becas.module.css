@@ -56,9 +56,38 @@
     border-radius: 20px !important;
 
 }
-.logo_unsm{
-  width: 50px !important  ;
-  height: 50px !important ;
+/* BOTÓN BASE */
+.btnAction {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(16,185,129,0.15);
+}
+
+/* SEMI-BECA → cambiar a BECA (verde fuerte) */
+.btnBeca {
+  background: linear-gradient(135deg, #047857, #059669);
+  color: white;
+}
+
+.btnBeca:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(5,150,105,0.4);
+}
+
+/* BECA → cambiar a SEMI (verde claro) */
+.btnSemiBeca {
+  background: linear-gradient(135deg, #6ee7b7, #34d399);
+  color: #064e3b;
+}
+
+.btnSemiBeca:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(16,185,129,0.3);
 }
 .noData{
   text-align: center;

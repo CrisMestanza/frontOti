@@ -1,4 +1,4 @@
-import styles from '../pages/dashboard/Dashboard.module.css';
+import styles from './Components.module.css';
 import { Link, useLocation } from "react-router-dom";
 
 export default function SideNav() {
@@ -8,19 +8,24 @@ export default function SideNav() {
     const links = [
         { icon: 'dashboard', label: 'Dashboard', url: '/dashboard' },
         { icon: 'mail', label: 'Gmail', url: '/gmail' },
-
-        { icon: 'school', label: 'Courses', url: '/courses' },
-        { icon: 'person', label: 'Profile', url: '/profile' },
+        { icon: 'school', label: 'Courses', url: '#' },
+        { icon: 'person', label: 'Profile', url: '#' },
         { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
-        { icon: 'newspaper', label: 'News', url: '/news' },
+        { icon: 'newspaper', label: 'News', url: '/#' },
     ];
 
     return (
         <aside className={styles.sideNav}>
+
             {/* Header */}
-            <div className={styles.sideNavLabel}>
-                <p className={styles.sideNavTitle}>Academic Portal</p>
-                <p className={styles.sideNavSubtitle}>Digital Curator</p>
+            <div className={styles.sideNavHeader}>
+                <div className={styles.logoBox}>
+                    <span className="material-symbols-outlined">school</span>
+                </div>
+                <div>
+                    <p className={styles.sideNavTitle}>Academic</p>
+                    <p className={styles.sideNavSubtitle}>Portal</p>
+                </div>
             </div>
 
             {/* Links */}
@@ -32,10 +37,12 @@ export default function SideNav() {
                         <Link
                             key={label}
                             to={url}
-                            className={isActive ? styles.sideNavLinkActive : styles.sideNavLink}
+                            className={`${styles.sideNavLink} ${isActive ? styles.active : ''}`}
                         >
-                            <span className="material-symbols-outlined">{icon}</span>
-                            <span>{label}</span>
+                            <span className={`${styles.icon} material-symbols-outlined`}>
+                                {icon}
+                            </span>
+                            <span className={styles.linkText}>{label}</span>
                         </Link>
                     );
                 })}
@@ -53,6 +60,7 @@ export default function SideNav() {
                     <span>Logout</span>
                 </Link>
             </div>
+
         </aside>
     );
 }

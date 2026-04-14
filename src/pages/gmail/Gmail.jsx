@@ -1,17 +1,12 @@
 import styles from '../dashboard/Dashboard.module.css';
 import SideNav from '../../components/SideNav';
 import styles2 from "./Gmail.module.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
-import LoadingModal from "./modalCarga";
 import TopNav from '../../components/TopNav';
-// ─── Sub-components ────────────────────────────────────────────────────────────
+import Swal from 'sweetalert2';
 
-// sidebar de arriba
-
-// fin de sidebar de arriba
-
-
+// 🔹 MOBILE NAV
 function MobileNav() {
     const items = [
         { icon: 'dashboard', label: 'Home', active: true },
@@ -35,20 +30,26 @@ function MobileNav() {
     );
 }
 
-// ─── Page Component (default export → úsalo como ruta) ─────────────────────────
-
+// 🔹 MAIN COMPONENT
 export default function Gmail() {
     const [file, setFile] = useState(null);
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const inputRef = useRef(null);
+
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-        setMessage("");
+        const selected = e.target.files[0];
+        if (selected) {
+            setFile(selected);
+        }
     };
 
     const handleUpload = async () => {
         if (!file) {
-            setMessage("Selecciona un archivo primero");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Archivo requerido',
+                text: 'Selecciona un archivo primero',
+                confirmButtonColor: '#16a34a'
+            });
             return;
         }
 
@@ -56,37 +57,60 @@ export default function Gmail() {
         formData.append("file", file);
 
         try {
-            setLoading(true);
-            setMessage("Procesando envíos");
+            // 🔥 SOLO UN LOADING (Swal)
+            Swal.fire({
+                title: 'Enviando correos...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             await axios.post(
-                "http://127.0.0.1:8000/api/gmail/",
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                "http://192.168.160.168:8080/api/gmail/",
+                formData
             );
 
-            setMessage("Todo hecho ✅");
+            // 🔥 CERRAR LOADING
+            Swal.close();
+
+            // ✅ ÉXITO
+            Swal.fire({
+                icon: 'success',
+                title: 'Correos enviados',
+                text: 'Todos los correos fueron enviados correctamente',
+                confirmButtonColor: '#16a34a'
+            });
+
+            // limpiar
+            setFile(null);
+            if (inputRef.current) {
+                inputRef.current.value = "";
+            }
+
         } catch (error) {
-            setMessage("Error al enviar el archivo ❌");
-        } finally {
-            setLoading(false);
+
+            Swal.close(); // 🔥 IMPORTANTE
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un problema al enviar el archivo',
+                confirmButtonColor: '#dc2626'
+            });
         }
     };
 
-
     return (
         <>
-            {/* Google Fonts (si tu proyecto no los carga globalmente) */}
             <link
                 href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
                 rel="stylesheet"
             />
             <link
-                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
                 rel="stylesheet"
             />
 
@@ -95,35 +119,74 @@ export default function Gmail() {
                 <SideNav />
 
                 <main className={styles.main}>
-                    <div className={styles.contentInner}>
+                    <div className={styles2.header}>
+                        <div className={styles2.headerLeft}>
+                            <div className={styles2.headerIcon}>
+                                <span className="material-symbols-outlined">mail</span>
+                            </div>
 
-                        <div className={styles2.uploadContainer}>
-                            <h2 className={styles2.title}>Cargar archivo Excel</h2>
-
-                            <input
-                                type="file"
-                                accept=".xlsx, .xls"
-                                onChange={handleFileChange}
-                                className={styles2.input}
-                            />
-
-                            <button onClick={handleUpload} className={styles2.button}>
-                                Enviar
-                            </button>
-
-                            {loading && <div className="spinner"></div>}
-                            <p>{message}</p>
-                            {message && <p className={styles2.message}>{message}</p>}
-
+                            <div>
+                                <h1 className={styles2.headerTitle}>Centro de Comunicación</h1>
+                                <p className={styles2.headerSubtitle}>
+                                    Gestiona tus correos institucionales y carga de datos masivos.
+                                </p>
+                            </div>
                         </div>
 
+                        <div className={styles2.headerActions}>
+                            <button className={styles2.tab}>Mensajes</button>
+                            <button className={`${styles2.tab} ${styles2.activeTab}`}>
+                                Carga Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className={styles.contentInner}>
+                        <div className={styles2.uploadContainer}>
+
+                            <div className={styles2.iconBox}>
+                                <span className="material-symbols-outlined">upload</span>
+                            </div>
+
+                            <h2 className={styles2.title}>Cargar archivo Excel</h2>
+
+                            <p className={styles2.subtitle}>
+                                Sube la lista de estudiantes.
+                            </p>
+
+                            <label className={styles2.dropzone}>
+                                <input
+                                    ref={inputRef}
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    onChange={handleFileChange}
+                                    hidden
+                                />
+
+                                <span className={styles2.dropTitle}>
+                                    {file ? file.name : "Seleccionar archivo"}
+                                </span>
+
+                                <span className={styles2.dropText}>
+                                    o arrastra y suelta aquí
+                                </span>
+                            </label>
+
+                       <button
+    onClick={handleUpload}
+    className={`${styles2.button} ${file ? styles2.buttonActive : ''}`}
+    disabled={!file}
+>
+                                <span className="material-symbols-outlined">upload</span>
+                                Enviar Archivo
+                            </button>
+
+                        </div>
                     </div>
                 </main>
 
                 <MobileNav />
             </div>
-            <LoadingModal show={loading} message={message} />
         </>
-
     );
 }

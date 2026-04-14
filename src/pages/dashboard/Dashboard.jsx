@@ -1,11 +1,7 @@
-// Dashboard.jsx
-// Uso: importa y úsalo como elemento de ruta en tu router
-// Ej: <Route path="/dashboard" element={<Dashboard />} />
 
 import styles from './Dashboard.module.css';
 import SideNav from '../../components/SideNav';
 import TopNav from '../../components/TopNav';
-// ─── Sub-components ────────────────────────────────────────────────────────────
 
 
 
