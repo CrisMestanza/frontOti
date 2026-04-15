@@ -95,6 +95,20 @@ export default function BecasComedor() {
     return `${partes[0]}-${mapa[partes[1]] || partes[1]}`;
   };
 const cambiarEstado = async (item) => {
+
+  const confirmacion = await Swal.fire({
+    title: '¿Está seguro?',
+    text: '¿Desea realizar esta acción?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#16a34a',
+    cancelButtonColor: '#dc2626',
+    confirmButtonText: 'Sí, continuar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmacion.isConfirmed) return; // ❌ si cancela, no hace nada
+
   const dni = item.entidad_estudiante?.dni;
   const periodo = convertirARomano(item.entidad_periodo?.nombre);
   const programa = item.entidad_bienestar?.programa || '';
@@ -106,7 +120,6 @@ const cambiarEstado = async (item) => {
     sede = sede.replace(/filial\s*/i, '').trim().toUpperCase();
   }
 
-  // 🔹 OBTENER BECA
   let beca = '';
   const progLower = programa.toLowerCase();
 
@@ -116,25 +129,18 @@ const cambiarEstado = async (item) => {
     beca = 'BECA';
   }
 
-  // 🔥 CONVERTIR ESTADO (0,1,2 → texto)
   let estadoTexto = 'pendiente';
 
   if (item.entidad_estudiante?.estado === 0) {
-    estadoTexto = 'aprobado'; // de pendiente pasa a aprobado
+    estadoTexto = 'aprobado';
   } else if (
     item.entidad_estudiante?.estado === 1 ||
     item.entidad_estudiante?.estado === 2
   ) {
-    estadoTexto = 'pendiente'; // aprobado o denegado → pendiente
+    estadoTexto = 'pendiente';
   }
 
-  const body = {
-    dni,
-    periodo,
-    sede,
-    beca,
-    estado: estadoTexto
-  };
+  const body = { dni, periodo, sede, beca, estado: estadoTexto };
 
   try {
     const res = await fetch('http://192.168.160.168:8080/api/cambioEstado/', {
@@ -152,7 +158,7 @@ const cambiarEstado = async (item) => {
         text: `Nuevo estado: ${estadoTexto}`,
         confirmButtonColor: '#16a34a'
       }).then(() => {
-        window.location.reload(); // 🔥 recarga como tú quieres
+        window.location.reload();
       });
 
     } else {
@@ -173,6 +179,20 @@ const cambiarEstado = async (item) => {
   }
 };
 const enviarDatos = async (item) => {
+
+  const confirmacion = await Swal.fire({
+    title: '¿Está seguro?',
+    text: '¿Desea cambiar el tipo de beca?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#16a34a',
+    cancelButtonColor: '#dc2626',
+    confirmButtonText: 'Sí, cambiar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmacion.isConfirmed) return; // ❌ cancela
+
   const dni = item.entidad_estudiante?.dni;
   const periodo = convertirARomano(item.entidad_periodo?.nombre);
   const programa = item.entidad_bienestar?.programa || '';
@@ -204,34 +224,30 @@ const enviarDatos = async (item) => {
 
     const data = await res.json();
 
-if (data?.mensaje === "Los datos ya fueron actualizados") {
-  Swal.fire({
-    icon: 'info',
-    title: 'Ya actualizado',
-    text: data.mensaje,
-    confirmButtonColor: '#16a34a'
-  }).then(() => {
-    window.location.reload(); // 🔥 recarga después del alert
-  });
+    if (data?.mensaje === "Los datos ya fueron actualizados") {
+      Swal.fire({
+        icon: 'info',
+        title: 'Ya actualizado',
+        text: data.mensaje,
+        confirmButtonColor: '#16a34a'
+      }).then(() => window.location.reload());
 
-} else if (res.ok) {
-  Swal.fire({
-    icon: 'success',
-    title: 'Éxito',
-    text: 'Correos enviados correctamente',
-    confirmButtonColor: '#16a34a'
-  }).then(() => {
-    window.location.reload(); // 🔥 recarga después del alert
-  });
+    } else if (res.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Correos enviados correctamente',
+        confirmButtonColor: '#16a34a'
+      }).then(() => window.location.reload());
 
-} else {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: data?.mensaje || 'Ocurrió un error',
-    confirmButtonColor: '#dc2626'
-  });
-}
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data?.mensaje || 'Ocurrió un error',
+        confirmButtonColor: '#dc2626'
+      });
+    }
 
   } catch (error) {
     console.error(error);

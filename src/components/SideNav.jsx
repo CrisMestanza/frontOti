@@ -5,14 +5,15 @@ export default function SideNav() {
 
     const location = useLocation();
 
-    const links = [
-        { icon: 'dashboard', label: 'Dashboard', url: '/dashboard' },
-        { icon: 'mail', label: 'Gmail', url: '/gmail' },
-        { icon: 'school', label: 'Courses', url: '#' },
-        { icon: 'person', label: 'Profile', url: '#' },
-        { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
-        { icon: 'newspaper', label: 'News', url: '/#' },
-    ];
+const links = [
+    { icon: 'dashboard', label: 'Dashboard', url: '/dashboard' },
+    { icon: 'mail', label: 'Gmail', url: '/gmail' },
+    { icon: 'school', label: 'Courses', url: '#' },
+    { icon: 'person', label: 'Profile', url: '#' },
+    { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
+    { icon: 'date_range', label: 'Períodos', url: '/periodos' },
+    { icon: 'newspaper', label: 'News', url: '/#' },
+];
 
     return (
         <aside className={styles.sideNav}>
