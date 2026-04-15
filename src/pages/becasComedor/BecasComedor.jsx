@@ -41,7 +41,7 @@ export default function BecasComedor() {
   const [periodo, setPeriodo] = useState('');
 
   useEffect(() => {
-    fetch('http://192.168.160.168:8080/api/getPeriodo/')
+    fetch('http://192.168.160.238:8080/api/getPeriodo/')
       .then(res => res.json())
       .then(res => setPeriodos(Array.isArray(res) ? res : []))
       .catch(err => console.error(err));
@@ -52,12 +52,12 @@ export default function BecasComedor() {
       try {
         if (dni && dni.length > 0 && dni.length < 8) return;
 
-        let url = 'http://192.168.160.168:8080/api/comedor/';
+        let url = 'http://192.168.160.238:8080/api/comedor/';
 
         if (dni && dni.length >= 8 && !periodo) {
-          url = `http://192.168.160.168:8080/api/getStudentsDni/${dni}/`;
+          url = `http://192.168.160.238:8080/api/getStudentsDni/${dni}/`;
         } else if (dni && periodo) {
-          url = `http://192.168.160.168:8080/api/getStudentsPeriodoDni/${dni}/${periodo}/`;
+          url = `http://192.168.160.238:8080/api/getStudentsPeriodoDni/${dni}/${periodo}/`;
         }
 
         const res = await fetch(url);
@@ -143,7 +143,7 @@ const cambiarEstado = async (item) => {
   const body = { dni, periodo, sede, beca, estado: estadoTexto };
 
   try {
-    const res = await fetch('http://192.168.160.168:8080/api/cambioEstado/', {
+    const res = await fetch('http://192.168.160.238:8080/api/cambioEstado/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -216,7 +216,7 @@ const enviarDatos = async (item) => {
   const body = { dni, periodo, sede, beca };
 
   try {
-    const res = await fetch('http://192.168.160.168:8080/api/cambioBeca/', {
+    const res = await fetch('http://192.168.160.238:8080/api/cambioBeca/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -360,13 +360,25 @@ const enviarDatos = async (item) => {
                           <td>{convertirARomano(per?.nombre)}</td>
                           <td>{prog?.programa}</td>
 <td>
-  {est?.estado === 0
-    ? 'Pendiente'
-    : est?.estado === 1
-    ? 'Aprobado'
-    : est?.estado === 2
-    ? 'Denegado'
-    : 'Desconocido'}
+  <span
+    className={`${styles1.estado} ${
+      est?.estado === 0
+        ? styles1.pendiente
+        : est?.estado === 1
+        ? styles1.aprobado
+        : est?.estado === 2
+        ? styles1.denegado
+        : styles1.desconocido
+    }`}
+  >
+    {est?.estado === 0
+      ? 'Pendiente'
+      : est?.estado === 1
+      ? 'Aprobado'
+      : est?.estado === 2
+      ? 'Denegado'
+      : 'Desconocido'}
+  </span>
 </td>
                           <td className={styles1.actions}>
                             {!esSemi && !esBeca ? (

@@ -12,7 +12,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/gmail" element={<Gmail />} />
         <Route path="/comedor" element={<BecasComedor />} />
-        <Route path="/periodos" element={<Periodos />} />
+        <Route path="/reportes" element={<Periodos />} />
 
       </Routes>
     </BrowserRouter>

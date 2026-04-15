@@ -69,7 +69,7 @@ export default function Gmail() {
             });
 
             await axios.post(
-                "http://192.168.160.168:8080/api/gmail/",
+                "http://192.168.160.238:8080/api/gmail/",
                 formData
             );
 

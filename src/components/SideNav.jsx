@@ -11,8 +11,8 @@ const links = [
     { icon: 'school', label: 'Courses', url: '#' },
     { icon: 'person', label: 'Profile', url: '#' },
     { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
-    { icon: 'date_range', label: 'Períodos', url: '/periodos' },
-    { icon: 'newspaper', label: 'News', url: '/#' },
+    { icon: 'bar_chart', label: 'Reportes', url: '/reportes' },    { icon: 'newspaper', label: 'News', url: '/#' },
+
 ];
 
     return (

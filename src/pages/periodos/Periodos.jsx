@@ -5,163 +5,263 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import TopNav from '../../components/TopNav';
 import Swal from 'sweetalert2';
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
 
-// 🔹 MOBILE NAV
-function MobileNav() {
-    const items = [
-        { icon: 'dashboard', label: 'Home', active: true },
-        { icon: 'school', label: 'Courses', active: false },
-        { icon: 'notifications', label: 'Alerts', active: false },
-        { icon: 'person', label: 'Profile', active: false },
-    ];
-
-    return (
-        <nav className={styles.mobileNav}>
-            {items.map(({ icon, label, active }) => (
-                <button
-                    key={label}
-                    className={`${styles.mobileNavBtn} ${active ? styles.active : styles.inactive}`}
-                >
-                    <span className="material-symbols-outlined">{icon}</span>
-                    <span className={styles.mobileNavLabel}>{label}</span>
-                </button>
-            ))}
-        </nav>
-    );
-}
-
+import { saveAs } from "file-saver";
 // 🔹 MAIN COMPONENT
 export default function Periodos() {
 
-    const [periodos, setPeriodos] = useState([]);
-    const [busqueda, setBusqueda] = useState("");
+    const [listaPeriodos, setListaPeriodos] = useState([]);
+    const [periodoSeleccionado, setPeriodoSeleccionado] = useState("");
 
-    // 🔹 Obtener datos
-    const fetchPeriodos = async () => {
+    // 🔥 NUEVO
+    const [reporte, setReporte] = useState([]);
+
+    // 🔹 PAGINACIÓN
+    const [paginaActual, setPaginaActual] = useState(1);
+    const registrosPorPagina = 10;
+
+    // 🔹 SELECT
+    const fetchSelectPeriodos = async () => {
+        try {
+            const res = await axios.get("http://192.168.160.238:8080/api/getPeriodo");
+            setListaPeriodos(res.data);
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo cargar periodos', 'error');
+        }
+    };
+
+    // 🔥 CONSUMIR REPORTE
+    const fetchReporte = async (id) => {
         try {
             Swal.fire({
-                title: 'Cargando...',
+                title: 'Generando reporte...',
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
 
-            const res = await axios.get("http://localhost:8080/api/periodos");
-
-            setPeriodos(res.data);
+            const res = await axios.get(`http://192.168.160.238:8080/api/generarReportes/${id}`);
+            setReporte(res.data);
+            setPaginaActual(1);
 
             Swal.close();
         } catch (error) {
             Swal.close();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo obtener los periodos'
-            });
+            Swal.fire('Error', 'No se pudo generar el reporte', 'error');
         }
     };
 
     useEffect(() => {
-        fetchPeriodos();
+        fetchSelectPeriodos();
     }, []);
 
-    // 🔹 Filtrado
-    const filtrados = periodos.filter(p =>
-        p.nombre.toLowerCase().includes(busqueda.toLowerCase())
-    );
+    // 🔥 CUANDO CAMBIA SELECT
+    const handleChangePeriodo = (e) => {
+        const id = e.target.value;
+        setPeriodoSeleccionado(id);
 
+        if (id) {
+            fetchReporte(id);
+        } else {
+            setReporte([]);
+        }
+    };
+
+    // 🔹 PAGINACIÓN LOGICA
+    const indexUltimo = paginaActual * registrosPorPagina;
+    const indexPrimero = indexUltimo - registrosPorPagina;
+    const datosActuales = reporte.slice(indexPrimero, indexUltimo);
+    const totalPaginas = Math.ceil(reporte.length / registrosPorPagina);
+
+const exportarExcel = () => {
+    if (reporte.length === 0) return;
+
+    const data = reporte.map(r => ({
+        // 🔹 DATOS PERSONALES
+        Nombre: r.Name,
+        ApellidoPaterno: r.PaternalSurname,
+        ApellidoMaterno: r.MaternalSurname,
+        TipoDocumento: r.DocumentType,
+        Documento: r.Document,
+        Codigo: r.Code,
+        Sexo: r.Sexo,
+        Procedencia: r.Procedencia,
+
+        // 🔹 FECHA
+        FechaNacimiento: r.FechaNacimiento
+            ? new Date(r.FechaNacimiento).toLocaleDateString()
+            : "",
+
+        Edad: r.Edad,
+        EstadoCivil: r.EstadoCivil,
+        NumeroHijos: r.NumeroHijos,
+
+        // 🔹 UBICACIÓN
+        Pais: r.Pais,
+        DepNacimiento: r.DepartamentoNacimiento,
+        ProvNacimiento: r.ProvinciaNacimiento,
+        DistNacimiento: r.DistritoNacimiento,
+
+        DepResidencia: r.DepartamentoResidencia,
+        ProvResidencia: r.ProvinciaResidencia,
+        DistResidencia: r.DistritoResidencia,
+
+        Direccion: r.Address,
+
+        // 🔹 CONTACTO
+        Email: r.Email,
+        Telefono1: r.Phone1,
+        Telefono2: r.Phone2 || "",
+
+        // 🔹 TRABAJO
+        Trabaja: r.SeEncuentraTrabajando ? "Sí" : "No",
+        Ocupacion: r.Occupation || "",
+        EstadoLaboral: r.EmploymentStatus || "",
+        Empresa: r.Business || "",
+
+        // 🔹 APODERADO
+        FamiliarApoderado: r.FamiliarApoderado,
+        NombreApoderado: r.RepresentativeName,
+        RelacionApoderado: r.RepresentativeRelation,
+        OcupacionApoderado: r.RepresentativeOcupation,
+        CentroLaboralApoderado: r.CentroLaboral,
+        TelefonoApoderado: r.RepresentativePhone,
+        EmailApoderado: r.RepresentativeEmail || "",
+
+        // 🔹 EDUCACIÓN
+        TipoEducacion: r.TipoEducacion,
+        EstudiosConcluidos: r.EstudiosConcluidos,
+        Colegio: r.Colegio,
+
+        DepColegio: r.DepartamentoColegio,
+        ProvColegio: r.ProvinciaColegio,
+        DistColegio: r.DistritoColegio,
+
+        InicioEstudios: r.FechaInicioPeriodoEstudio,
+        FinEstudios: r.FechaFinPeriodoEstudio || "",
+
+        // 🔹 OTROS
+        Discapacidad: r.PresentaDiscapacidad,
+        TipoDiscapacidad: r.DiscapacityType || ""
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    // 🔥 AUTO ANCHO DINÁMICO
+    const colWidths = Object.keys(data[0]).map(key => ({
+        wch: Math.max(
+            key.length,
+            ...data.map(row => (row[key] ? row[key].toString().length : 10))
+        )
+    }));
+
+    worksheet["!cols"] = colWidths;
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte Completo");
+
+    const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array"
+    });
+
+    const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    saveAs(blob, "reporte_completo.xlsx");
+};
     return (
-        <>
-            <link
-                href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
-                rel="stylesheet"
-            />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-                rel="stylesheet"
-            />
+        <div className={styles.wrapper}>
+            <TopNav />
+            <SideNav />
 
-            <div className={styles.wrapper}>
-                <TopNav />
-                <SideNav />
+            <main className={styles.main}>
+                <div className={styles2.header}>
+                    <h1>Reportes por Periodo</h1>
+                </div>
 
-                <main className={styles.main}>
-                    {/* 🔹 HEADER */}
-                    <div className={styles2.header}>
-                        <div className={styles2.headerLeft}>
-                            <div className={styles2.headerIcon}>
-                                <span className="material-symbols-outlined">calendar_month</span>
-                            </div>
+                <div className={styles.contentInner}>
 
-                            <div>
-                                <h1 className={styles2.headerTitle}>Consulta de Periodos</h1>
-                                <p className={styles2.headerSubtitle}>
-                                    Visualiza y busca los periodos registrados.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    {/* 🔥 SELECT */}
+                    <select
+                        value={periodoSeleccionado}
+                        onChange={handleChangePeriodo}
+                        className={styles2.select}
+                    >
+                        <option value="">-- Seleccionar Periodo --</option>
+                        {listaPeriodos.map((p) => (
+                            <option key={p.value} value={p.value}>
+                                {p.label}
+                            </option>
+                        ))}
+                    </select>
 
-                    {/* 🔹 CONTENIDO */}
-                    <div className={styles.contentInner}>
+                    {/* 🔥 BOTÓN EXCEL */}
+                    {reporte.length > 0 && (
+                        <button onClick={exportarExcel} className={styles2.btnExcel}>
+                            Descargar Excel
+                        </button>
+                    )}
 
-                        {/* 🔍 BUSCADOR */}
-                        <div className={styles2.searchBox}>
-                            <span className="material-symbols-outlined">search</span>
-                            <input
-                                type="text"
-                                placeholder="Buscar periodo..."
-                                value={busqueda}
-                                onChange={(e) => setBusqueda(e.target.value)}
-                            />
-                        </div>
-
-                        {/* 📋 TABLA */}
-                        <div className={styles2.tableContainer}>
-                            <table className={styles2.table}>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Fecha Inicio</th>
-                                        <th>Fecha Fin</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filtrados.length > 0 ? (
-                                        filtrados.map((p) => (
-                                            <tr key={p.id}>
-                                                <td>{p.id}</td>
-                                                <td>{p.nombre}</td>
-                                                <td>{p.fechaInicio}</td>
-                                                <td>{p.fechaFin}</td>
-                                                <td>
-                                                    <span className={
-                                                        p.estado === "ACTIVO"
-                                                            ? styles2.badgeActive
-                                                            : styles2.badgeInactive
-                                                    }>
-                                                        {p.estado}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="5" className={styles2.noData}>
-                                                No hay resultados
-                                            </td>
+                    {/* 🔥 TABLA DINÁMICA */}
+                    <div className={styles2.tableContainer}>
+                        <table className={styles2.table}>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Documento</th>
+                                    <th>Sexo</th>
+                                    <th>Edad</th>
+                                    <th>Colegio</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {datosActuales.length > 0 ? (
+                                    datosActuales.map((r, i) => (
+                                        <tr key={i}>
+                                            <td>{r.Name} {r.PaternalSurname} {r.MaternalSurname}</td>
+                                            <td>{r.Document}</td>
+                                            <td>{r.Sexo}</td>
+                                            <td>{r.Edad}</td>
+                                            <td>{r.Colegio}</td>
+                                            <td>{r.Phone1}</td>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6">No hay datos</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
-                </main>
 
-                <MobileNav />
-            </div>
-        </>
+                    {/* 🔥 PAGINACIÓN */}
+                    {totalPaginas > 1 && (
+                        <div className={styles2.pagination}>
+                            <button
+                                disabled={paginaActual === 1}
+                                onClick={() => setPaginaActual(paginaActual - 1)}
+                            >
+                                ◀
+                            </button>
+
+                            <span>Página {paginaActual} de {totalPaginas}</span>
+
+                            <button
+                                disabled={paginaActual === totalPaginas}
+                                onClick={() => setPaginaActual(paginaActual + 1)}
+                            >
+                                ▶
+                            </button>
+                        </div>
+                    )}
+
+                </div>
+            </main>
+        </div>
     );
 }
