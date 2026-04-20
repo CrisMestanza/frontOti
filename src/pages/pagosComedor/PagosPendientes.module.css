@@ -1,0 +1,142 @@
+/* ===== HEADER ===== */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 35px 20px;
+  background: linear-gradient(135deg, #065f46, #10b981);
+    border-radius: 14px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+}
+
+.headerLeft span {
+    padding: 13px;
+    border: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+}
+
+.headerTitle {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.headerSubtitle {
+    font-size: 18px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* ===== SEARCH ===== */
+.searchBox {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.searchBox input {
+    width: 260px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1fae5;
+    outline: none;
+    transition: 0.3s;
+    background: #f0fdf4;
+}
+
+.searchBox input:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+/* BOTONES */
+.searchBox button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.searchBox button:first-of-type {
+    background: #22c55e;
+    color: white;
+}
+
+.searchBox button:first-of-type:hover {
+    background: #16a34a;
+}
+
+.searchBox button:last-of-type {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.searchBox button:last-of-type:hover {
+    background: #d1d5db;
+}
+
+/* ===== TABLE ===== */
+.tableContainer {
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid #ecfdf5;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.table th {
+    background: linear-gradient(135deg, #14532d, #166534);
+    color: white;
+    padding: 12px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid #f0fdf4;
+    font-size: 14px;
+}
+
+.table tr:hover {
+    background: #f0fdf4;
+    transition: 0.2s;
+}
+
+/* ===== NO DATA ===== */
+.noData {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+}
+
+/* ===== ICON ACTION ===== */
+.iconDelete {
+    color: #ef4444;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.iconDelete:hover {
+    transform: scale(1.2);
+    color: #dc2626;
+}

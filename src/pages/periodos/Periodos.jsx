@@ -28,7 +28,7 @@ export default function Periodos() {
     // 🔹 CARGAR PERIODOS
     const fetchSelectPeriodos = async () => {
         try {
-            const res = await axios.get("http://192.168.160.238:8080/api/getPeriodo");
+            const res = await axios.get("http://192.168.161.188:8000/api/getPeriodo");
             setListaPeriodos(res.data);
         } catch (error) {
             Swal.fire('Error', 'No se pudo cargar periodos', 'error');
@@ -39,7 +39,7 @@ export default function Periodos() {
     const fetchTerms = async (periodoId) => {
         try {
             const res = await axios.get(
-                `http://192.168.160.238:8080/api/getApplicationTerms/${periodoId}`
+                `http://192.168.161.188:8000/api/getApplicationTerms/${periodoId}`
             );
             setTerms(res.data);
         } catch (error) {
@@ -57,7 +57,7 @@ export default function Periodos() {
             });
 
             const res = await axios.get(
-                `http://192.168.160.238:8080/api/generarReportes/${termId}`
+                `http://192.168.161.188:8000/api/generarReportes/${termId}`
             );
 
             setReporte(res.data);
