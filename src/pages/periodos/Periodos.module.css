@@ -32,12 +32,13 @@
   align-items: center;
   justify-content: center;
 }
-
+/* TITULO */
 .headerTitle {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
+  margin: 0;
+  margin-bottom: -5px;
 }
-
 .headerSubtitle {
   font-size: 14px;
   opacity: 0.9;
@@ -56,6 +57,7 @@
   border-radius: 12px;
   border: 1px solid #bbf7d0;
   background: #f0fdf4;
+  margin-bottom: -15px;
 }
 
 /* BOTÓN */
@@ -116,4 +118,69 @@
   border: none;
   padding: 8px 14px;
   border-radius: 10px;
+}
+/* 🔥 HEADER PREMIUM */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 26px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #065f46, #10b981);
+  color: white;
+
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.25);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  width: 55px;
+  height: 55px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerIcon span {
+  font-size: 28px;
+}
+
+
+.headerSubtitle {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* 🔥 BOTÓN PRINCIPAL */
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+.btnPrimary {
+  background: white;
+  color: #047857;
+  border: none;
+
+  padding: 10px 14px;
+  border-radius: 10px;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btnPrimary:hover {
+  background: #ecfdf5;
+  transform: translateY(-1px);
 }

@@ -2,6 +2,7 @@
 import styles from './Dashboard.module.css';
 import SideNav from '../../components/SideNav';
 import TopNav from '../../components/TopNav';
+import MobileNav from '../../components/MobileNav';
 
 
 
@@ -30,29 +31,6 @@ function WelcomeBanner() {
 
 
 
-
-function MobileNav() {
-  const items = [
-    { icon: 'dashboard',     label: 'Home',    active: true  },
-    { icon: 'school',        label: 'Courses', active: false },
-    { icon: 'notifications', label: 'Alerts',  active: false },
-    { icon: 'person',        label: 'Profile', active: false },
-  ];
-
-  return (
-    <nav className={styles.mobileNav}>
-      {items.map(({ icon, label, active }) => (
-        <button
-          key={label}
-          className={`${styles.mobileNavBtn} ${active ? styles.active : styles.inactive}`}
-        >
-          <span className="material-symbols-outlined">{icon}</span>
-          <span className={styles.mobileNavLabel}>{label}</span>
-        </button>
-      ))}
-    </nav>
-  );
-}
 
 // ─── Page Component (default export → úsalo como ruta) ─────────────────────────
 

@@ -1,48 +1,76 @@
-/* ===== HEADER ===== */
+
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 35px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 25px 30px;
+  border-radius: 20px;
+
+  margin-bottom: -25px;
   background: linear-gradient(135deg, #065f46, #10b981);
-    border-radius: 14px;
-    color: white;
-    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+  color: white;
+
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
 }
 
+/* IZQUIERDA */
 .headerLeft {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ICONO */
+.headerIcon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
 }
 
 .headerLeft span {
-    padding: 13px;
-    border: 10px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.2);
+    padding: 8px;
+        border-radius: 8px;
+        color: white;
+  font-size: 30px;
 }
 
+/* TITULO */
 .headerTitle {
-    font-size: 30px;
-    font-weight: 700;
-    margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
 }
 
+/* SUBTITULO */
 .headerSubtitle {
-    font-size: 18px;
-    opacity: 0.9;
-    margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 4px;
 }
 
-/* ===== SEARCH ===== */
+/* BOTONES DERECHA */
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+
+
 .searchBox {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-bottom: -20px;
 }
-
+.swal2-container {
+    z-index: 20000 !important;
+}
 .searchBox input {
     width: 260px;
     padding: 12px 14px;

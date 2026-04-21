@@ -1,190 +1,140 @@
-  .logo_unsm{
-    width: 50px !important  ;
-    height: 60px !important ;
-  }
-  /* ── Top Nav ── */
-  .topNav {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 50;
-    height: 64px;
-    box-shadow: 0 12px 32px rgba(25, 28, 29, 0.06);
-  }
+/* =========================
+   🔝 TOP NAV
+========================= */
+.topNav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 78px;
+  z-index: 100;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
 
-  .topNavInner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    height: 64px;
-    max-width: 1920px;
-    margin: 0 auto;
-  }
+.topNavInner {
+  max-width: 1500px;
+  margin: auto;
+  height: 78px;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .logo {
-    font-size: 2.8rem;
-    font-weight: 900 !important;
-    letter-spacing: -0.05em;
-    color: #15803d;
-    font-weight: 900;
-    margin-left: 4px;
-    text-decoration: none;
-  }
+/* BRAND */
+.brandBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-  .topNavLinks {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-left: 2rem;
-  }
+.logoBig {
+  width: 58px;
+  height: 64px;
+  object-fit: contain;
+}
 
-  .topNavLinkActive {
-    color: #15803d;
-    font-weight: 700;
-    border-bottom: 2px solid #15803d;
-    padding: 1rem 0;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
 
-  .topNavLink {
-    color: #52525b;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-  }
+.uniTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #054633;
+}
 
-  .topNavLink:hover {
-    background: #f4f4f5;
-  }
+.uniSubtitle {
+  font-size: 0.9rem;
+  color: #b2b9c4;
+}
 
-  .topNavLeft {
-    display: flex;
-    align-items: center;
-  }
+/* RIGHT */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-  .topNavRight {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+.search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
 
-  .searchWrapper {
-    position: relative;
-    display: none;
-  }
+.search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 170px;
+}
 
-  @media (min-width: 640px) {
-    .searchWrapper {
-      display: block;
-    }
-  }
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .searchIcon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6e7a6c;
-    font-size: 1.2rem;
-    pointer-events: none;
-  }
+.iconBtn:hover {
+  background: #f1f5f9;
+}
 
-  .searchInput {
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    background: #edeeef;
-    border: none;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    width: 256px;
-    outline: none;
-    font-family: 'Manrope', sans-serif;
-    transition: box-shadow 0.2s;
-  }
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
 
-  .searchInput:focus {
-    box-shadow: 0 0 0 2px #006b2a;
-  }
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  .iconBtn {
-    background: none;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 9999px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s, transform 0.15s;
-    color: #52525b;
-  }
-
-  .iconBtn:hover {
-    background: #f4f4f5;
-  }
-
-  .iconBtn:active {
-    transform: scale(0.95);
-  }
-
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 9999px;
-    overflow: hidden;
-    border: 1px solid rgba(189, 202, 186, 0.3);
-  }
-
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-
-
-/* ───────── SIDENAV ───────── */
 .sideNav {
   position: fixed;
-  top: 64px;
+  top: 78px;
   left: 0;
   width: 250px;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 78px);
   background: linear-gradient(180deg, #052e16, #064e3b);
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem 0.75rem;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
 }
 
 /* HEADER */
 .sideNavHeader {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-
-
+.logoBox span {
+  font-size: 3rem;
+}
 
 .sideNavTitle {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-}
-
-.sideNavSubtitle {
-  font-size: 0.75rem;
-  color: #bbf7d0;
+  text-align: center;
+  margin-top: 10px;
 }
 
 /* LINKS */
@@ -192,10 +142,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  margin-top: 1rem;
 }
 
-/* LINK BASE */
 .sideNavLink {
   display: flex;
   align-items: center;
@@ -204,85 +152,90 @@
   border-radius: 0.75rem;
   text-decoration: none;
   color: #d1fae5;
-  font-size: 0.9rem;
-  transition: all 0.25s ease;
+  transition: 0.25s;
 }
 
-/* ICON */
-.icon {
-  font-size: 1.3rem;
-}
-
-/* HOVER */
 .sideNavLink:hover {
   background: rgba(255, 255, 255, 0.08);
   transform: translateX(4px);
 }
 
-/* ACTIVE */
 .active {
   background: #15803d;
-  color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* FOOTER */
 .sideNavBottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 10px;
+}
+
+.mobileNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+
+.mobileNavBtn {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.5rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  align-items: center;
+  font-size: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
 }
 
-/* RESPONSIVE */
+.mobileNavBtn span {
+  font-size: 20px;
+}
+
+.mobileNavLabel {
+  font-size: 11px;
+}
+
+.active {
+  color: white;
+  font-weight: 600;
+}
+
+
 @media (max-width: 768px) {
+
   .sideNav {
-    width: 70px;
-  }
-
-  .linkText {
     display: none;
   }
 
-  .sideNavTitle,
-  .sideNavSubtitle {
+  .brandText {
     display: none;
+  }
+
+  .search {
+    display: none;
+  }
+
+  .logoBig {
+    width: 45px;
+    height: 45px;
+  }
+
+  .right {
+    gap: 8px;
   }
 }
 
-
-/* ───────── TOP NAV FIX ───────── */
-.topNav {
-  height: 78px; /* 🔥 más alto */
-}
-
-/* contenedor */
-.topNavInner {
-  height: 78px;
-  padding: 0 2rem;
-}
-
-
-/* LINKS */
-.topNavLink {
-  font-size: 0.95rem;
-  padding: 0.5rem 0.8rem;
-}
-
-/* ACTIVE */
-.activeLink {
-  font-size: 0.95rem;
-  padding: 0.5rem 0.9rem;
-}
-
-/* SEARCH */
-.searchInput {
-  height: 38px;
-}
-
-/* BOTONES */
-.iconBtn {
-  padding: 0.5rem;
+@media (min-width: 769px) {
+  .mobileNav {
+    display: none;
+  }
 }

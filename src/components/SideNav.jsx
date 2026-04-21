@@ -22,8 +22,7 @@ const links = [
                     <span className="material-symbols-outlined">school</span>
                 </div>
                 <div>
-                    <p className={styles.sideNavTitle}>Academic</p>
-                    <p className={styles.sideNavSubtitle}>Portal</p>
+                    <p className={styles.sideNavTitle}>Sistema Academico</p>
                 </div>
             </div>
 

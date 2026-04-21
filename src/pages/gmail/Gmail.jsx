@@ -5,32 +5,10 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import TopNav from '../../components/TopNav';
 import Swal from 'sweetalert2';
+import MobileNav from '../../components/MobileNav';
+import { API } from '../../conf/api';
 
-// 🔹 MOBILE NAV
-function MobileNav() {
-    const items = [
-        { icon: 'dashboard', label: 'Home', active: true },
-        { icon: 'school', label: 'Courses', active: false },
-        { icon: 'notifications', label: 'Alerts', active: false },
-        { icon: 'person', label: 'Profile', active: false },
-    ];
 
-    return (
-        <nav className={styles.mobileNav}>
-            {items.map(({ icon, label, active }) => (
-                <button
-                    key={label}
-                    className={`${styles.mobileNavBtn} ${active ? styles.active : styles.inactive}`}
-                >
-                    <span className="material-symbols-outlined">{icon}</span>
-                    <span className={styles.mobileNavLabel}>{label}</span>
-                </button>
-            ))}
-        </nav>
-    );
-}
-
-// 🔹 MAIN COMPONENT
 export default function Gmail() {
 
     const [tab, setTab] = useState("excel");
@@ -72,7 +50,7 @@ export default function Gmail() {
         try {
             Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
 
-            await axios.post("http://192.168.161.188:8000/api/gmail/", formData);
+            await axios.post(API.gmailUpload, formData);
 
             Swal.close();
             Swal.fire('Éxito', 'Correos enviados', 'success');
@@ -85,38 +63,33 @@ export default function Gmail() {
             Swal.fire('Error', 'Error al enviar archivo', 'error');
         }
     };
+const handleSendMail = async () => {
 
-    // 🔹 ENVIAR CORREO MANUAL
-    const handleSendMail = async () => {
+    if (!form.correo || !form.asunto || !form.mensaje) {
+        Swal.fire('Campos requeridos', 'Completa todo', 'warning');
+        return;
+    }
 
-        if (!form.correo || !form.asunto || !form.mensaje) {
-            Swal.fire('Campos requeridos', 'Completa todo', 'warning');
-            return;
-        }
+    try {
+        Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
 
-        try {
-            Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
+        const res = await axios.post(API.sendMail, form); // 👈 AQUÍ ESTÁ LA CORRECCIÓN
 
-            const res = await axios.post(
-                "http://192.168.161.188:8000/api/enviar-correo/",
-                form
-            );
+        Swal.close();
+        Swal.fire('Éxito', res.data.mensaje || 'Correo enviado correctamente', 'success');
 
-            Swal.close();
-            Swal.fire('Éxito', res.data.mensaje, 'success');
+        setForm({
+            correo: "",
+            asunto: "",
+            mensaje: ""
+        });
 
-            setForm({
-                correo: "",
-                asunto: "",
-                mensaje: ""
-            });
-
-        } catch {
-            Swal.close();
-            Swal.fire('Error', 'No se pudo enviar', 'error');
-        }
-    };
-
+    } catch (error) {
+        console.log(error.response?.data || error); // 👈 ver error real del backend
+        Swal.close();
+        Swal.fire('Error', 'No se pudo enviar el mensaje', 'error');
+    }
+};
     return (
         <>
             <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />

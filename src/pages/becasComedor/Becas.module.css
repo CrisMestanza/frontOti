@@ -1,16 +1,18 @@
 :root {
-  --verde-principal: #059669;
-  --verde-secundario: #10b981;
-  --verde-suave: #ecfdf5;
-  --verde-hover: #047857;
+  --primary: #059669;
+  --primary-dark: #047857;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e5e7eb;
 }
 
-/* 🔥 HEADER PRO */
+
 .header {
+  margin-top: -5vh !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   padding: 25px 30px;
   border-radius: 20px;
 
@@ -20,74 +22,105 @@
   box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
 }
 
+/* IZQUIERDA */
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
 }
 
+/* ICONO */
 .headerIcon {
   width: 60px;
   height: 60px;
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  background: rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(6px);
 }
 
 .headerIcon span {
-  font-size: 28px;
+  font-size: 30px;
 }
 
+/* TITULO */
 .headerTitle {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
+  margin: 0;
 }
 
+/* SUBTITULO */
 .headerSubtitle {
   font-size: 14px;
   opacity: 0.9;
+  margin-top: 4px;
 }
 
-/* 🔥 CARD */
-.card {
+/* BOTONES DERECHA */
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+
+.tab {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-weight: 600;
+}
+
+.activeTab {
   background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  color: #047857;
 }
 
-/* 🔥 FILTROS */
+/* 🔥 FILTROS CARD */
+.filtersCard {
+  margin-top: 18px;
+  background: var(--card);
+  padding: 16px;
+  border-radius: 14px;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
 .filters {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
 }
 
 .filters input,
 .filters select {
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #d1fae5;
-  background: #f0fdf4;
-  transition: 0.25s;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f9fafb;
 }
 
 .filters input:focus,
 .filters select:focus {
   outline: none;
-  border-color: var(--verde-secundario);
-  background: white;
-  box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
 }
 
-/* 🔥 TABLA */
-.tableContainer {
-  overflow-x: auto;
-  border-radius: 16px;
-  border: 1px solid #dcfce7;
+/* 🔥 TABLA CARD */
+.tableCard {
+  margin-top: 18px;
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
 .table {
@@ -95,30 +128,29 @@
   border-collapse: collapse;
 }
 
-/* HEADER TABLA */
 .table thead {
-  background: linear-gradient(135deg, #059669, #10b981);
+  background: #064e3b;
   color: white;
 }
 
 .table th {
   padding: 14px;
   text-align: left;
+  font-size: 13px;
 }
 
-/* FILAS */
 .table td {
   padding: 14px;
-  border-bottom: 1px solid #ecfdf5;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .table tbody tr:hover {
   background: #f0fdf4;
 }
 
-/* 🔥 ESTADOS */
-.estado {
-  padding: 6px 12px;
+/* 🔥 BADGES */
+.badge {
+  padding: 5px 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
@@ -126,22 +158,17 @@
 
 .pendiente {
   background: #fef3c7;
-  color: #d97706;
+  color: #b45309;
 }
 
 .aprobado {
   background: #dcfce7;
-  color: #16a34a;
+  color: #15803d;
 }
 
 .denegado {
   background: #fee2e2;
-  color: #dc2626;
-}
-
-.desconocido {
-  background: #e5e7eb;
-  color: #6b7280;
+  color: #b91c1c;
 }
 
 /* 🔥 BOTONES */
@@ -150,38 +177,37 @@
   gap: 8px;
 }
 
-.btnAction {
+.btn {
   padding: 7px 12px;
   border-radius: 10px;
   border: none;
   font-size: 12px;
-  font-weight: 600;
   cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
-.btnBeca {
+.primary {
+  background: #059669;
+  color: white;
+}
+
+.primary:hover {
   background: #047857;
-  color: white;
 }
 
-.btnSemiBeca {
-  background: #6ee7b7;
-  color: #064e3b;
+.secondary {
+  background: #e5e7eb;
+  color: #111827;
 }
 
-.btnEstado {
-  background: #10b981;
-  color: white;
+.secondary:hover {
+  background: #d1d5db;
 }
 
-/* 🔥 TEXTO */
+/* EMPTY */
 .noData {
   text-align: center;
-  padding: 20px;
-  color: #64748b;
-}
-
-.noComedor {
-  font-size: 12px;
-  color: #9ca3af;
+  padding: 30px;
+  color: #6b7280;
 }

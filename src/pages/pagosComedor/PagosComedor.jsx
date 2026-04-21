@@ -4,30 +4,8 @@ import styles2 from './PagosPendientes.module.css';
 import SideNav from '../../components/SideNav';
 import TopNav from '../../components/TopNav';
 import Swal from 'sweetalert2';
-
-function MobileNav() {
-    const items = [
-        { icon: 'dashboard', label: 'Home', active: true },
-        { icon: 'school', label: 'Becas', active: false },
-        { icon: 'mail', label: 'Gmail', active: false },
-        { icon: 'payments', label: 'Pagos', active: false },
-    ];
-
-    return (
-        <nav className={styles.mobileNav}>
-            {items.map(({ icon, label, active }) => (
-                <button
-                    key={label}
-                    className={`${styles.mobileNavBtn} ${active ? styles.active : styles.inactive}`}
-                >
-                    <span className="material-symbols-outlined">{icon}</span>
-                    <span className={styles.mobileNavLabel}>{label}</span>
-                </button>
-            ))}
-        </nav>
-    );
-}
-
+import MobileNav from '../../components/MobileNav';
+import { API } from '../../conf/api'; 
 export default function PagosPendientes() {
 
     const [dni, setDni] = useState('');
@@ -43,7 +21,7 @@ export default function PagosPendientes() {
     useEffect(() => {
         setLoading(true);
 
-        fetch(`http://192.168.161.243:8000/api/getUser`)
+        fetch(API.getUser)
             .then(res => res.json())
             .then(res => {
                 setUsers(res?.data || []);
@@ -56,11 +34,9 @@ export default function PagosPendientes() {
             });
     }, []);
 
-    // 🔥 BUSCAR POR DNI (TU API)
     const buscarPorDni = () => {
 
         if (!dni) {
-            // 🔄 si está vacío, vuelve todo
             setUsers(usersOriginal);
             return;
         }
@@ -72,7 +48,7 @@ export default function PagosPendientes() {
 
         setLoading(true);
 
-        fetch(`http://192.168.161.243:8000/api/getestudiantedi/${dni}`)
+        fetch(API.getEstudianteDni(dni))
             .then(res => res.json())
             .then(res => {
 
@@ -80,7 +56,6 @@ export default function PagosPendientes() {
                     setUsers([]);
                     Swal.fire('Sin resultados', 'No se encontró el DNI', 'info');
                 } else {
-                    // 🔥 convertir a array para la tabla
                     setUsers([res.data]);
                 }
 
@@ -100,18 +75,25 @@ const eliminarPago = (id) => {
         showCancelButton: true,
         confirmButtonColor: '#22c55e',
         cancelButtonColor: '#ef4444',
-        confirmButtonText: 'Sí, eliminar'
+        confirmButtonText: 'Sí, eliminar',
+        target: document.body,
+
+        didOpen: () => {
+            const swalContainer = document.querySelector('.swal2-container');
+            if (swalContainer) {
+                swalContainer.style.zIndex = '20000';
+            }
+        }
     }).then((result) => {
 
         if (result.isConfirmed) {
 
-            fetch(`http://192.168.161.243:8000/api/deletePago/${id}`, {
+            fetch(API.deletePago(id), {
                 method: 'DELETE'
             })
                 .then(res => res.json())
                 .then(() => {
 
-                    // 🔥 quitar de la tabla sin recargar
                     setPagos(prev => prev.filter(p => p.Id !== id));
 
                     Swal.fire('Eliminado', 'Pago eliminado correctamente', 'success');
@@ -122,8 +104,7 @@ const eliminarPago = (id) => {
                 });
         }
     });
-}; 
-    // 🔥 PAGOS
+};
     const obtenerPagos = (dniInput) => {
         if (!dniInput || dniInput.length < 8) {
             Swal.fire('Error', 'Ingrese un DNI válido', 'warning');
@@ -133,7 +114,7 @@ const eliminarPago = (id) => {
         setSelectedDni(dniInput);
         setLoading(true);
 
-        fetch(`http://192.168.161.243:8000/api/getPagos/${dniInput}`)
+        fetch(API.getPagos(dniInput))
             .then(res => res.json())
             .then(res => {
                 setPagos(res?.data || []);

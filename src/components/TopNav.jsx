@@ -1,78 +1,52 @@
-import topNav from './Components.module.css';
-import { Link, useLocation } from "react-router-dom";
+import styles from './Components.module.css';
+import { useLocation } from "react-router-dom";
 
 export default function TopNav() {
-
   const location = useLocation();
 
   return (
-    <nav className={topNav.topNav}>
-      <div className={topNav.topNavInner}>
+    <nav className={styles.topNav}>
+      <div className={styles.topNavInner}>
 
-        {/* LEFT */}
-        <div className={topNav.topNavLeft}>
-          <img src="src/assets/logo.png" alt="" className={topNav.logo_unsm}/>
+        {/* LEFT - BRAND */}
+        <div className={styles.brandBlock}>
+          <img
+            src="src/assets/logo.png"
+            alt="UNSM"
+            className={styles.logoBig}
+          />
 
-          <Link to="/dashboard" className={topNav.logo}>
-            UNSM
-          </Link>
-
-          <div className={topNav.topNavLinks}>
-            <Link
-              to="/dashboard"
-              className={location.pathname === "/dashboard" ? topNav.activeLink : topNav.topNavLink}
-            >
-              Dashboard
-            </Link>
-
-            <Link
-              to="/courses"
-              className={location.pathname === "/courses" ? topNav.activeLink : topNav.topNavLink}
-            >
-              Courses
-            </Link>
-
-            <Link
-              to="/news"
-              className={location.pathname === "/news" ? topNav.activeLink : topNav.topNavLink}
-            >
-              News
-            </Link>
+          <div className={styles.brandText}>
+            <span className={styles.uniTitle}>
+              Universidad Nacional de San Martín
+            </span>
+            <span className={styles.uniSubtitle}>
+              Sistema Académico
+            </span>
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className={topNav.topNavRight}>
+        <div className={styles.right}>
 
-          <div className={topNav.searchWrapper}>
-            <span className={`material-symbols-outlined ${topNav.searchIcon}`}>
-              search
-            </span>
-            <input
-              type="text"
-              className={topNav.searchInput}
-              placeholder="Buscar..."
-            />
+          <div className={styles.search}>
+            <span className="material-symbols-outlined">search</span>
+            <input placeholder="Buscar..." />
           </div>
 
-          <button className={topNav.iconBtn}>
+          <button className={styles.iconBtn}>
             <span className="material-symbols-outlined">notifications</span>
-            <span className={topNav.badge}></span>
           </button>
 
-          <button className={topNav.iconBtn}>
+          <button className={styles.iconBtn}>
             <span className="material-symbols-outlined">settings</span>
           </button>
 
-          <div className={topNav.avatar}>
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbkZ6AKnZBP8dM_MRyXY-BhReIl9-X2ip9Bw74ehlvD8-FpcEkiqVRL5Cc3ykUweQ_EsmKpgr4sYPBm8_gtd9ZdMoXbpEhdrdljXnxrJMKO6lXppIFtR6va7lAySyA05_yEuvRE_3U0ssPo_-5bYiyf_E--Tu4M57u6GJCuTseIk0Bjn_I_nV8piVNUsz3cSWI7GXtCXM8upwUunfn-Z8vAseglWhYpDX6dcYJ5qfQ7LVhe2L1gTO-iZ0-WlJjev5gQo_5BdHpirI"
-              alt="perfil"
-            />
+          <div className={styles.avatar}>
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbkZ6AKnZBP8dM_MRyXY-BhReIl9-X2ip9Bw74ehlvD8-FpcEkiqVRL5Cc3ykUweQ_EsmKpgr4sYPBm8_gtd9ZdMoXbpEhdrdljXnxrJMKO6lXppIFtR6va7lAySyA05_yEuvRE_3U0ssPo_-5bYiyf_E--Tu4M57u6GJCuTseIk0Bjn_I_nV8piVNUsz3cSWI7GXtCXM8upwUunfn-Z8vAseglWhYpDX6dcYJ5qfQ7LVhe2L1gTO-iZ0-WlJjev5gQo_5BdHpirI" />
           </div>
 
         </div>
-
       </div>
     </nav>
   );
