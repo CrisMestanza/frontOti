@@ -1,4 +1,4 @@
-export const API_BASE = "http://192.168.6.51:8080/api";
+export const API_BASE = "http://192.168.160.156:8080/api";
 
 export const API = {
 
@@ -35,5 +35,5 @@ export const API = {
     `${API_BASE}/getPagos/${dni}`,
 
   deletePago: (id) =>
-    `${API_BASE}/deletePago/${id}`,
+    `${API_BASE}/deletePagos/${id}/`,
 };
