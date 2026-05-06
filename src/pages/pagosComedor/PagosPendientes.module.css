@@ -168,3 +168,7 @@
     transform: scale(1.2);
     color: #dc2626;
 }
+
+.swal2-container {
+  z-index: 20000 !important;
+}

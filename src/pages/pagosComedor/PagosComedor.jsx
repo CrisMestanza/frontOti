@@ -76,13 +76,12 @@ const eliminarPago = (id) => {
         confirmButtonColor: '#22c55e',
         cancelButtonColor: '#ef4444',
         confirmButtonText: 'Sí, eliminar',
-        target: document.body,
-
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         didOpen: () => {
-            const swalContainer = document.querySelector('.swal2-container');
-            if (swalContainer) {
-                swalContainer.style.zIndex = '20000';
-            }
+            const container = document.querySelector('.swal2-container');
+            if (container) container.style.zIndex = '20000';
         }
     }).then((result) => {
 
@@ -96,11 +95,32 @@ const eliminarPago = (id) => {
 
                     setPagos(prev => prev.filter(p => p.Id !== id));
 
-                    Swal.fire('Eliminado', 'Pago eliminado correctamente', 'success');
+                    // ✔ SweetAlert de éxito (también arriba del modal)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'Pago eliminado correctamente',
+                        confirmButtonColor: '#22c55e',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            const container = document.querySelector('.swal2-container');
+                            if (container) container.style.zIndex = '20000';
+                        }
+                    });
+
                 })
                 .catch(err => {
                     console.error(err);
-                    Swal.fire('Error', 'No se pudo eliminar', 'error');
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar',
+                        didOpen: () => {
+                            const container = document.querySelector('.swal2-container');
+                            if (container) container.style.zIndex = '20000';
+                        }
+                    });
                 });
         }
     });
