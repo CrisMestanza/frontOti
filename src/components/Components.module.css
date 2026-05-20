@@ -113,8 +113,8 @@
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding: 1rem 0.75rem;
+  
 }
 
 /* HEADER */
@@ -142,6 +142,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+    flex: 1;
+
 }
 
 .sideNavLink {
@@ -167,10 +169,10 @@
 
 /* FOOTER */
 .sideNavBottom {
+  margin-top: auto;
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 10px;
 }
-
 .mobileNav {
   position: fixed;
   bottom: 0;

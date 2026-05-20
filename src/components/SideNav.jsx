@@ -1,35 +1,43 @@
 import styles from './Components.module.css';
 import { Link, useLocation } from "react-router-dom";
+import { getUser } from "../auth";
 
 export default function SideNav() {
     const location = useLocation();
+    const user = getUser();
 
-const links = [
-        { icon: 'dashboard', label: 'Dashboard', url: '/dashboard' },
-        { icon: 'mail', label: 'Gmail', url: '/gmail' },
-        { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
-          { icon: 'poll', label: 'Encuestas', url: '/encuestas' },
+    const links = [
+        { icon: 'dashboard', label: 'Dashboard', url: '/dashboard', roles: ["OTI"] },
+        { icon: 'mail', label: 'Gmail', url: '/gmail', roles: ["OTI"] },
+        { icon: 'workspace_premium', label: 'Becas', url: '/comedor', roles: ["OTI"] },
+        { icon: 'poll', label: 'Encuestas', url: '/encuestas', roles: ["OTI", "ASUNTOS_ACADEMICOS"] },
+        { icon: 'bar_chart', label: 'Reportes', url: '/reportes', roles: ["OTI"] },
+        { icon: 'delete', label: 'Gestionar Pagos', url: '/comedor/pagos', roles: ["OTI"] },
+    ];
 
-        { icon: 'bar_chart', label: 'Reportes', url: '/reportes' },
-        { icon: 'delete', label: 'Gestionar Pagos', url: '/comedor/pagos' },];
+    // FILTRAR POR ROL
+    let visibleLinks = links.filter(l => l.roles.includes(user?.rol));
 
+    // 🔥 REORDENAMIENTO ESPECIAL PARA ASUNTOS_ACADEMICOS
+    if (user?.rol === "ASUNTOS_ACADEMICOS") {
+        visibleLinks = [
+            ...visibleLinks.filter(l => l.label === "Encuestas"),
+            ...visibleLinks.filter(l => l.label !== "Encuestas"),
+        ];
+    }
 
     return (
         <aside className={styles.sideNav}>
 
-            {/* Header */}
             <div className={styles.sideNavHeader}>
                 <div className={styles.logoBox}>
                     <span className="material-symbols-outlined">school</span>
                 </div>
-                <div>
-                    <p className={styles.sideNavTitle}>Sistema Academico</p>
-                </div>
+                <p className={styles.sideNavTitle}>Sistema Académico</p>
             </div>
 
-            {/* Links */}
             <nav className={styles.sideNavLinks}>
-                {links.map(({ icon, label, url }) => {
+                {visibleLinks.map(({ icon, label, url }) => {
                     const isActive = location.pathname === url;
 
                     return (
@@ -38,25 +46,17 @@ const links = [
                             to={url}
                             className={`${styles.sideNavLink} ${isActive ? styles.active : ''}`}
                         >
-                            <span className={`${styles.icon} material-symbols-outlined`}>
-                                {icon}
-                            </span>
-                            <span className={styles.linkText}>{label}</span>
+                            <span className="material-symbols-outlined">{icon}</span>
+                            <span>{label}</span>
                         </Link>
                     );
                 })}
             </nav>
 
-            {/* Footer */}
             <div className={styles.sideNavBottom}>
-                <Link to="/help" className={styles.sideNavLink}>
-                    <span className="material-symbols-outlined">help</span>
-                    <span>Help</span>
-                </Link>
-
                 <Link to="/logout" className={styles.sideNavLink}>
                     <span className="material-symbols-outlined">logout</span>
-                    <span>Logout</span>
+                    <span>Cerrar sesión</span>
                 </Link>
             </div>
 

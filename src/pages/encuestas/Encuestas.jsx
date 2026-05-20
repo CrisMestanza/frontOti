@@ -733,14 +733,7 @@ const buscarPorDepartamento = async (id) => {
 
                     <div>
 
-                        <div className={styles2.heroBadge}>
-                            <span className="material-symbols-outlined">
-                                analytics
-                            </span>
-
-                            Sistema de Encuestas
-                        </div>
-
+                  
                         <h1 className={styles2.heroTitle}>
                             Centro de Encuestas Docentes
                         </h1>

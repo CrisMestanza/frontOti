@@ -1,71 +1,103 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
+import { loginUser, setUser } from "../../auth";
+import Swal from "sweetalert2";
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ usuario, password });
+
+    if (usuario.trim() === "" || password.trim() === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos vacíos",
+        text: "Por favor ingresa usuario y contraseña",
+      });
+      return;
+    }
+
+    const user = loginUser(usuario, password);
+
+    if (!user) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Credenciales incorrectas",
+      });
+      return;
+    }
+
+    setUser(user);
+
+    navigate(user.rol === "OTI" ? "/dashboard" : "/encuestas");
   };
 
   return (
     <div className={styles.container}>
-      {/* LEFT PANEL */}
       <div className={styles.left}>
-        <div className={styles.card}>
-          <img
-            src="src/assets/logo.png"
-            alt="logo"
-            className={styles.logo}
-          />
+        <div className={styles.bubbles}>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
 
-          <h1 className={styles.title}>SISTEMA DE GESTION</h1>
+        <div className={styles.card}>
+          <div className={styles.logoBox}>
+            <img src="src/assets/logo.png" alt="logo" />
+          </div>
+
+          <h1 className={styles.title}>
+            Universidad Nacional de San Martín
+          </h1>
 
           <p className={styles.subtitle}>
-            Ingresa tus credenciales para acceder al sistema de gestion insitucional 
+            Accede con tus credenciales institucionales
           </p>
 
           <form onSubmit={handleSubmit} className={styles.form}>
-            <label>USUARIO</label>
-            <input
-              type="text"
-              placeholder="ej. alexj"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-            />
 
-            <label>CONTRASEÑA</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <div className={styles.row}>
-              <label className={styles.remember}>
-                <input type="checkbox" /> Recordarme
-              </label>
-
-              <a href="#" className={styles.link}>
-                ¿Olvidaste tu contraseña?
-              </a>
+            {/* USER */}
+            <div className={styles.inputGroup}>
+              <span className="material-symbols-outlined">person</span>
+              <input
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                placeholder="Usuario"
+              />
             </div>
 
-            <button type="submit" className={styles.button}>
-              INGRESAR AL SISTEMA
-            </button>
+            {/* PASSWORD */}
+            <div className={styles.inputGroup}>
+              <span className="material-symbols-outlined">lock</span>
 
-            <p className={styles.footer}>
-              © 2026 FISI - UNSM. Todos los derechos reservados.
-            </p>
+              <input
+                type={showPass ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+              />
+
+              <span
+                className={styles.eye}
+                onClick={() => setShowPass(!showPass)}
+              >
+                <span className="material-symbols-outlined">
+                  {showPass ? "visibility_off" : "visibility"}
+                </span>
+              </span>
+            </div>
+
+            <button className={styles.button}>Ingresar</button>
           </form>
         </div>
       </div>
 
-      {/* RIGHT IMAGE */}
       <div className={styles.right}></div>
     </div>
   );
