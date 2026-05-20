@@ -9,6 +9,7 @@ const items = [
   { icon: 'home', label: 'Home', path: '/' },
   { icon: 'mail', label: 'Gmail', path: '/gmail' },
   { icon: 'school', label: 'Becas', path: '/becas' },
+  { icon: 'poll', label: 'Encuestas', path: '/encuestas' },
   { icon: 'payment', label: 'Pagos Comedor', path: '/comedor/pagos' },
 ];
 

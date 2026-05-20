@@ -1,9 +1,10 @@
+// src/conf/api.js
 
-export const API_BASE = "http://192.168.160.156:8080/api";
+export const API_BASE = "http://192.168.161.96:8000/api";
 
 export const API = {
 
-  //  BECAS / COMEDOR
+  // 🔹 BECAS / COMEDOR
   getPeriodo: `${API_BASE}/getPeriodo/`,
   comedor: `${API_BASE}/comedor/`,
 
@@ -16,19 +17,20 @@ export const API = {
   cambioEstado: `${API_BASE}/cambioEstado/`,
   cambioBeca: `${API_BASE}/cambioBeca/`,
 
-  //CORREOS
+  // 🔹 CORREOS
   gmailUpload: `${API_BASE}/gmail/`,
   sendMail: `${API_BASE}/enviar-correo/`,
 
-  //REPORTES
+  // 🔹 REPORTES
   getApplicationTerms: (periodoId) =>
     `${API_BASE}/getApplicationTerms/${periodoId}`,
 
   generarReportes: (termId) =>
     `${API_BASE}/generarReportes/${termId}`,
 
-  // comedor / PAGOS
+  // 🔹 COMEDOR / PAGOS
   getUser: `${API_BASE}/getUser`,
+
   getEstudianteDni: (dni) =>
     `${API_BASE}/getestudiantedi/${dni}`,
 
@@ -37,4 +39,18 @@ export const API = {
 
   deletePago: (id) =>
     `${API_BASE}/deletePagos/${id}/`,
+
+  // 🔹 ENCUESTAS
+  getEncuestas: `${API_BASE}/getencuesta/`,
+
+  getEncuestaDocente: (dni) =>
+    `${API_BASE}/getencuestadocente/${dni}/`,
+
+  getEncuestaDepartamento: (id) =>
+    `${API_BASE}/getencuestadepartamento/${id}/`,
+
+  getDepartamentos: `${API_BASE}/getdepartamentos/`,
+
+  getDocente: (dni) =>
+    `${API_BASE}/getdocentes/${dni}/`,
 };

@@ -2,13 +2,14 @@ import styles from './Components.module.css';
 import { Link, useLocation } from "react-router-dom";
 
 export default function SideNav() {
-
     const location = useLocation();
 
 const links = [
         { icon: 'dashboard', label: 'Dashboard', url: '/dashboard' },
         { icon: 'mail', label: 'Gmail', url: '/gmail' },
         { icon: 'workspace_premium', label: 'Becas', url: '/comedor' },
+          { icon: 'poll', label: 'Encuestas', url: '/encuestas' },
+
         { icon: 'bar_chart', label: 'Reportes', url: '/reportes' },
         { icon: 'delete', label: 'Gestionar Pagos', url: '/comedor/pagos' },];
 
