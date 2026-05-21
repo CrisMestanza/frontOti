@@ -22,11 +22,33 @@ export default function Encuestas() {
 
     const [dniDocente, setDniDocente] = useState("");
     const [departamentoSeleccionado, setDepartamentoSeleccionado] = useState("");
+    const [encuestasDisponibles, setEncuestasDisponibles] = useState([]);
+const [encuestaSeleccionada, setEncuestaSeleccionada] = useState("");
 
     // 🔹 PAGINACIÓN
     const [paginaActual, setPaginaActual] = useState(1);
     const registrosPorPagina = 10;
+const fetchEncuestasDisponibles = async () => {
 
+    try {
+
+        const res = await axios.get(
+            API.getEncuestas
+        );
+
+        setEncuestasDisponibles(res.data.data || []);
+
+    } catch (error) {
+
+        console.log(error);
+
+        Swal.fire(
+            'Error',
+            'No se pudieron cargar las encuestas',
+            'error'
+        );
+    }
+};
     // 🔹 TODAS LAS ENCUESTAS
     const fetchEncuestas = async () => {
 
@@ -39,7 +61,7 @@ export default function Encuestas() {
             });
 
       const res = await axios.get(
-    API.getEncuestas
+    API.getEncuesta
 ); 
 
             setEncuestas(res.data);
@@ -68,11 +90,13 @@ const generarPDFGeneral = async () => {
             didOpen: () => Swal.showLoading()
         });
 
-        const res = await axios.get(API.getEncuestas);
+        const res = await axios.get(API.getEncuesta);
         const data = res.data;
 
         if (!data || data.length === 0) {
+
             Swal.close();
+
             return Swal.fire(
                 'Aviso',
                 'No hay encuestas disponibles',
@@ -81,229 +105,525 @@ const generarPDFGeneral = async () => {
         }
 
         const doc = new jsPDF("p", "mm", "a4");
+
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
-
-        let y = 12;
 
         // =========================
         // RECORRER ENCUESTAS
         // =========================
+
         for (let i = 0; i < data.length; i++) {
 
             const encuesta = data[i];
 
+            let y = 8;
+
             if (i > 0) {
                 doc.addPage();
-                y = 12;
             }
+
+            // =========================
+            // OPACIDAD ENCABEZADO
+            // =========================
+
+            doc.setGState(
+                new doc.GState({ opacity: 0.75 })
+            );
 
             // =========================
             // LOGO
             // =========================
-            doc.addImage(logoUNSM, "PNG", 10, 6, 25, 30);
+
+            doc.addImage(
+                logoUNSM,
+                "PNG",
+                10,
+                2,
+                25,
+                30
+            );
 
             // =========================
-            // TITULOS
+            // ENCABEZADO
             // =========================
+
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.setTextColor(90);
+            doc.setFontSize(16);
+
+            doc.setTextColor(70);
 
             doc.text(
                 "UNIVERSIDAD NACIONAL DE SAN MARTÍN",
                 pageWidth / 2,
-                15,
+                10,
                 { align: "center" }
             );
 
-            doc.line(pageWidth / 2 - 42, 16, pageWidth / 2 + 42, 16);
+            doc.line(
+                pageWidth / 2 - 58,
+                11,
+                pageWidth / 2 + 58,
+                11
+            );
 
-            doc.setFontSize(11);
+            doc.setFontSize(13);
+
             doc.text(
                 "VICERRECTORADO ACADÉMICO",
                 pageWidth / 2,
-                21,
+                16,
                 { align: "center" }
             );
 
-            doc.line(pageWidth / 2 - 28, 22, pageWidth / 2 + 28, 22);
+            doc.line(
+                pageWidth / 2 - 36,
+                17,
+                pageWidth / 2 + 36,
+                17
+            );
 
             doc.setFontSize(9);
+
             doc.text(
                 "DIRECCIÓN DE ASUNTOS ACADÉMICOS",
                 pageWidth / 2,
-                27,
+                22,
                 { align: "center" }
             );
 
-            doc.line(pageWidth / 2 - 32, 28, pageWidth / 2 + 32, 28);
+            doc.line(
+                pageWidth / 2 - 32,
+                23,
+                pageWidth / 2 + 32,
+                23
+            );
 
             // =========================
             // FECHA
             // =========================
+
             const fecha = new Date();
 
             doc.setFontSize(8);
+
             doc.setFont("helvetica", "bold");
-            doc.text("OBTENIDO", 175, 14);
+
+            doc.text(
+                "OBTENIDO",
+                185,
+                12
+            );
 
             doc.setFont("helvetica", "normal");
-            doc.text(fecha.toLocaleDateString(), 176, 20);
-            doc.text(fecha.toLocaleTimeString(), 176, 25);
+
+            doc.text(
+                fecha.toLocaleDateString(),
+                187,
+                17
+            );
+
+            doc.text(
+                fecha.toLocaleTimeString(),
+                190,
+                22
+            );
 
             // =========================
-            // LINEA
+            // RESET OPACIDAD
             // =========================
+
+            doc.setGState(
+                new doc.GState({ opacity: 1 })
+            );
+
+            // =========================
+            // LINEA PRINCIPAL
+            // =========================
+
             doc.setDrawColor(80, 120, 70);
-            doc.setLineWidth(0.5);
-            doc.line(10, 38, 200, 38);
 
-            y = 48;
+            doc.setLineWidth(0.5);
+
+            doc.line(
+                10,
+                32,
+                200,
+                32
+            );
+
+            y = 40;
 
             // =========================
             // DATOS
             // =========================
+
             doc.setFontSize(9);
+
             doc.setTextColor(0);
 
             doc.setFont("helvetica", "bold");
-            doc.text("Encuesta", 20, y);
-            doc.text(":", 75, y);
+
+            doc.text(
+                "Encuesta",
+                20,
+                y
+            );
+
+            doc.text(
+                ":",
+                75,
+                y
+            );
 
             doc.setFont("helvetica", "normal");
-            doc.text(encuesta.nombre_encuesta || "-", 78, y);
+
+            doc.text(
+                encuesta.nombre_encuesta || "-",
+                78,
+                y
+            );
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
-            doc.text("Departamento Académico", 20, y);
-            doc.text(":", 75, y);
+
+            doc.text(
+                "Departamento Académico",
+                20,
+                y
+            );
+
+            doc.text(
+                ":",
+                75,
+                y
+            );
 
             doc.setFont("helvetica", "normal");
-            doc.text(encuesta.departamento_academico || "-", 78, y);
+
+            doc.text(
+                encuesta.departamento_academico || "-",
+                78,
+                y
+            );
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
-            doc.text("Docente", 20, y);
-            doc.text(":", 75, y);
+
+            doc.text(
+                "Código",
+                20,
+                y
+            );
+
+            doc.text(
+                ":",
+                75,
+                y
+            );
 
             doc.setFont("helvetica", "normal");
-            doc.text(encuesta.FullName || "-", 78, y);
 
-            y += 12;
+            doc.text(
+                encuesta.UserName || "-",
+                78,
+                y
+            );
+
+            y += 6;
+
+            doc.setFont("helvetica", "bold");
+
+            doc.text(
+                "Docente",
+                20,
+                y
+            );
+
+            doc.text(
+                ":",
+                75,
+                y
+            );
+
+            doc.setFont("helvetica", "normal");
+
+            doc.text(
+                encuesta.FullName || "-",
+                78,
+                y
+            );
+
+            y += 6;
+
+            doc.setFont("helvetica", "bold");
+
+            doc.text(
+                "Semestre",
+                20,
+                y
+            );
+
+            doc.text(
+                ":",
+                75,
+                y
+            );
+
+            doc.setFont("helvetica", "normal");
+
+            doc.text(
+                "2026-I",
+                78,
+                y
+            );
+
+            y += 8;
+
+            // =========================
+            // TITULO TABLAS
+            // =========================
+
+            doc.setFont("helvetica", "bold");
 
             doc.setFontSize(8);
-            doc.text("Detalle de los resultados:", 20, y);
-            y += 5;
+
+            doc.text(
+                "Detalle de las secciones, preguntas y valoración:",
+                20,
+                y
+            );
+
+            doc.text(
+                "Puntaje",
+                165,
+                y
+            );
+
+            y += 4;
 
             // =========================
             // TABLAS
             // =========================
+
             encuesta.categorias?.forEach((categoria) => {
 
                 const tituloCategoria =
-                    categoria.amarrillo?.split(":")[0]?.trim();
+                    categoria.amarrillo
+                        ?.split(":")[0]
+                        ?.trim();
 
-                doc.setFillColor(220, 220, 220);
-                doc.rect(20, y, 165, 7, "F");
+                // =========================
+                // TITULO SECCION
+                // =========================
+
+                doc.setFillColor(
+                    220,
+                    220,
+                    220
+                );
+
+                doc.rect(
+                    20,
+                    y,
+                    165,
+                    6,
+                    "F"
+                );
+
                 doc.setDrawColor(0);
-                doc.rect(20, y, 165, 7);
 
-                doc.setFontSize(8);
-                doc.setFont("helvetica", "bold");
-                doc.text(`Sección: ${tituloCategoria}`, 23, y + 4.5);
+                doc.rect(
+                    20,
+                    y,
+                    165,
+                    6
+                );
 
-                y += 7;
+                doc.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                doc.setFontSize(7.5);
+
+                doc.text(
+                    `Sección: ${tituloCategoria}`,
+                    23,
+                    y + 4
+                );
+
+                y += 5.5;
+
+                // =========================
+                // TABLA
+                // =========================
 
                 autoTable(doc, {
+
                     startY: y,
-                    margin: { left: 20 },
+
+                    margin: {
+                        left: 20
+                    },
+
                     tableWidth: 165,
-                    body: categoria.preguntas?.map((p, index) => [
-                        `${index + 1}. ${p.pregunta}`,
-                        p.Puntuacion
-                    ]) || [],
+
+                    body:
+                        categoria.preguntas?.map((p, index) => [
+                            `${index + 1}. ${p.pregunta}`,
+                            p.Puntuacion
+                        ]) || [],
+
                     theme: "grid",
+
                     styles: {
                         fontSize: 7,
-                        cellPadding: 2,
+                        cellPadding: 1.5,
                         lineColor: [0, 0, 0],
-                        lineWidth: 0.2
+                        lineWidth: 0.2,
+                        minCellHeight: 5
                     },
+
                     columnStyles: {
-                        0: { cellWidth: 140 },
-                        1: { halign: "center", cellWidth: 25, fontStyle: "bold" }
+                        0: {
+                            cellWidth: 140
+                        },
+                        1: {
+                            halign: "center",
+                            cellWidth: 25,
+                            fontStyle: "bold"
+                        }
                     }
                 });
 
-                y = doc.lastAutoTable.finalY;
+                y = doc.lastAutoTable.finalY + 1.5;
             });
 
-            y += 2;
+            // =========================
+            // TOTAL
+            // =========================
 
             autoTable(doc, {
-                startY: y,
-                margin: { left: 20 },
+
+                startY: y + 2,
+
+                margin: {
+                    left: 20
+                },
+
                 tableWidth: 165,
+
                 body: [[
                     {
                         content: "TOTAL",
-                        styles: { fontStyle: "bold", halign: "right" }
+                        styles: {
+                            fontStyle: "bold",
+                            halign: "right"
+                        }
                     },
                     {
-                        content: String(encuesta.puntaje_total),
-                        styles: { fontStyle: "bold", halign: "center" }
+                        content: String(
+                            encuesta.puntaje_total || 0
+                        ),
+                        styles: {
+                            fontStyle: "bold",
+                            halign: "center"
+                        }
                     }
                 ]],
+
                 theme: "grid",
+
                 styles: {
-                    fontSize: 8,
-                    cellPadding: 2,
+                    fontSize: 7.5,
+                    cellPadding: 1.5,
                     lineColor: [0, 0, 0],
                     lineWidth: 0.2
                 },
+
                 columnStyles: {
-                    0: { cellWidth: 140 },
-                    1: { cellWidth: 25 }
+                    0: {
+                        cellWidth: 140
+                    },
+                    1: {
+                        cellWidth: 25
+                    }
                 }
             });
 
-            y = doc.lastAutoTable.finalY + 12;
+            y = doc.lastAutoTable.finalY + 6;
 
             // =========================
             // LEYENDA
             // =========================
-            doc.setFontSize(6);
-            doc.setFont("helvetica", "italic");
 
-            doc.text("*Leyenda:", 20, y);
+            doc.setFont(
+                "helvetica",
+                "bold"
+            );
+
+            doc.setFontSize(7.5);
+
+            doc.text(
+                "*Leyenda:",
+                20,
+                y
+            );
+
             y += 4;
+
+            doc.setFont(
+                "helvetica",
+                "normal"
+            );
+
+            doc.setFontSize(7);
 
             doc.text(
                 "Muy de acuerdo 5; De acuerdo 4; Ni acuerdo ni desacuerdo 3; En desacuerdo 2; Muy en desacuerdo 1.",
                 20,
-                y,
-                { maxWidth: 160 }
+                y
             );
         }
 
         // =========================
-        // PIE DE PAGINA (NUMERACION)
+        // PIE DE PAGINA
         // =========================
-        const totalPages = doc.internal.getNumberOfPages();
+
+        const totalPages =
+            doc.internal.getNumberOfPages();
 
         for (let i = 1; i <= totalPages; i++) {
+
             doc.setPage(i);
 
-            doc.setFontSize(8);
+            doc.setDrawColor(180);
+
+            doc.line(
+                10,
+                pageHeight - 15,
+                200,
+                pageHeight - 15
+            );
+
+            doc.setFontSize(7);
+
             doc.setTextColor(120);
+
+            doc.text(
+                "Universidad Nacional de San Martín - Dirección de Asuntos Académicos",
+                pageWidth / 2,
+                pageHeight - 10,
+                { align: "center" }
+            );
 
             doc.text(
                 `Página ${i} de ${totalPages}`,
                 pageWidth / 2,
-                pageHeight - 10,
+                pageHeight - 6,
                 { align: "center" }
             );
         }
@@ -311,7 +631,10 @@ const generarPDFGeneral = async () => {
         // =========================
         // DESCARGAR
         // =========================
-        doc.save("Reporte-General-Encuestas.pdf");
+
+        doc.save(
+            "Reporte-General-Encuestas.pdf"
+        );
 
         Swal.close();
 
@@ -381,8 +704,7 @@ const buscarPorDocente = async () => {
         );
     }
 };
-// ✅ PDF
-// ✅ PDF
+
 const generarPDF = async (encuesta) => {
 
     const doc = new jsPDF("p", "mm", "a4");
@@ -390,59 +712,81 @@ const generarPDF = async (encuesta) => {
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
 
-    let y = 12;
+    let y = 8;
 
     // =========================
-    // LOGO LOCAL
+    // OPACIDAD ENCABEZADO
+    // =========================
+
+    doc.setGState(new doc.GState({ opacity: 0.75 }));
+
+    // =========================
+    // LOGO
     // =========================
 
     doc.addImage(
         logoUNSM,
         "PNG",
         10,
-        6,
+        2,
         25,
         30
     );
 
     // =========================
-    // TITULOS
+    // ENCABEZADO
     // =========================
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(90);
+    doc.setFontSize(16);
+
+    doc.setTextColor(70);
 
     doc.text(
         "UNIVERSIDAD NACIONAL DE SAN MARTÍN",
         pageWidth / 2,
-        15,
+        10,
         { align: "center" }
     );
 
-    doc.line(pageWidth / 2 - 42, 16, pageWidth / 2 + 42, 16);
+    doc.line(
+        pageWidth / 2 - 58,
+        11,
+        pageWidth / 2 + 58,
+        11
+    );
 
-    doc.setFontSize(11);
+    doc.setFontSize(13);
 
     doc.text(
         "VICERRECTORADO ACADÉMICO",
         pageWidth / 2,
-        21,
+        16,
         { align: "center" }
     );
 
-    doc.line(pageWidth / 2 - 28, 22, pageWidth / 2 + 28, 22);
+    doc.line(
+        pageWidth / 2 - 36,
+        17,
+        pageWidth / 2 + 36,
+        17
+    );
 
     doc.setFontSize(9);
 
     doc.text(
         "DIRECCIÓN DE ASUNTOS ACADÉMICOS",
         pageWidth / 2,
-        27,
+        22,
         { align: "center" }
     );
 
-    doc.line(pageWidth / 2 - 32, 28, pageWidth / 2 + 32, 28);
+    doc.line(
+        pageWidth / 2 - 32,
+        23,
+        pageWidth / 2 + 32,
+        23
+    );
 
     // =========================
     // FECHA
@@ -453,21 +797,43 @@ const generarPDF = async (encuesta) => {
     doc.setFontSize(8);
 
     doc.setFont("helvetica", "bold");
-    doc.text("OBTENIDO", 175, 14);
+    doc.text("OBTENIDO", 185, 12);
 
     doc.setFont("helvetica", "normal");
-    doc.text(fecha.toLocaleDateString(), 176, 20);
-    doc.text(fecha.toLocaleTimeString(), 176, 25);
+
+    doc.text(
+        fecha.toLocaleDateString(),
+        187,
+        17
+    );
+
+    doc.text(
+        fecha.toLocaleTimeString(),
+        190,
+        22
+    );
 
     // =========================
-    // LINEA
+    // RESET OPACIDAD
+    // =========================
+
+    doc.setGState(new doc.GState({ opacity: 1 }));
+
+    // =========================
+    // LINEA PRINCIPAL
     // =========================
 
     doc.setDrawColor(80, 120, 70);
     doc.setLineWidth(0.5);
-    doc.line(10, 38, 200, 38);
 
-    y = 48;
+    doc.line(
+        10,
+        32,
+        200,
+        32
+    );
+
+    y = 40;
 
     // =========================
     // DATOS
@@ -481,26 +847,46 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text(encuesta.nombre_encuesta || "-", 78, y);
+
+    doc.text(
+        encuesta.nombre_encuesta || "-",
+        78,
+        y
+    );
 
     y += 6;
 
     doc.setFont("helvetica", "bold");
-    doc.text("Departamento Académico", 20, y);
+
+    doc.text(
+        "Departamento Académico",
+        20,
+        y
+    );
+
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text(encuesta.departamento_academico || "-", 78, y);
+
+    doc.text(
+        encuesta.departamento_academico || "-",
+        78,
+        y
+    );
 
     y += 6;
 
-    // CÓDIGO
     doc.setFont("helvetica", "bold");
     doc.text("Código", 20, y);
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text(encuesta.UserName || "-", 78, y);
+
+    doc.text(
+        encuesta.UserName || "-",
+        78,
+        y
+    );
 
     y += 6;
 
@@ -509,7 +895,12 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text(encuesta.FullName || "-", 78, y);
+
+    doc.text(
+        encuesta.FullName || "-",
+        78,
+        y
+    );
 
     y += 6;
 
@@ -520,12 +911,29 @@ const generarPDF = async (encuesta) => {
     doc.setFont("helvetica", "normal");
     doc.text("2026-I", 78, y);
 
-    y += 12;
+    y += 8;
 
+    // =========================
+    // TITULO TABLAS
+    // =========================
+
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
-    doc.text("Detalle de los resultados:", 20, y);
 
-    y += 5;
+doc.text(
+    "Detalle de las secciones, preguntas y valoración:",
+    20,
+    y
+);
+
+// PUNTAJE EN LA MISMA LÍNEA A LA DERECHA
+doc.text(
+    "Puntaje",
+    165,
+    y
+);
+
+    y += 4;
 
     // =========================
     // TABLAS
@@ -534,59 +942,132 @@ const generarPDF = async (encuesta) => {
     encuesta.categorias?.forEach((categoria) => {
 
         const tituloCategoria =
-            categoria.amarrillo?.split(":")[0]?.trim();
+            categoria.amarrillo
+                ?.split(":")[0]
+                ?.trim();
+
+        // BLOQUE TITULO
 
         doc.setFillColor(220, 220, 220);
-        doc.rect(20, y, 165, 7, "F");
+
+        doc.rect(
+            20,
+            y,
+            165,
+            6,
+            "F"
+        );
+
         doc.setDrawColor(0);
-        doc.rect(20, y, 165, 7);
+
+        doc.rect(
+            20,
+            y,
+            165,
+            6
+        );
 
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(8);
+        doc.setFontSize(7.5);
 
         doc.text(
             `Sección: ${tituloCategoria}`,
             23,
-            y + 4.5
+            y + 4
         );
 
-        y += 7;
+        // MÁS PEGADO A LA TABLA
+
+        y += 5.5;
 
         autoTable(doc, {
+
             startY: y,
-            margin: { left: 20 },
+
+            margin: {
+                left: 20
+            },
+
             tableWidth: 165,
-            body: categoria.preguntas?.map((p, i) => [
-                `${i + 1}. ${p.pregunta}`,
-                p.Puntuacion
-            ]) || [],
+
+            body:
+                categoria.preguntas?.map((p, i) => [
+                    `${i + 1}. ${p.pregunta}`,
+                    p.Puntuacion
+                ]) || [],
+
             theme: "grid",
+
             styles: {
                 fontSize: 7,
-                cellPadding: 2,
+                cellPadding: 1.5,
                 lineColor: [0, 0, 0],
-                lineWidth: 0.2
+                lineWidth: 0.2,
+                minCellHeight: 5
             },
+
             columnStyles: {
-                0: { cellWidth: 140 },
-                1: { halign: "center", cellWidth: 25, fontStyle: "bold" }
+                0: {
+                    cellWidth: 140
+                },
+                1: {
+                    halign: "center",
+                    cellWidth: 25,
+                    fontStyle: "bold"
+                }
             }
         });
 
-        y = doc.lastAutoTable.finalY;
+        // BLOQUES MÁS JUNTOS
+
+        y = doc.lastAutoTable.finalY + 1.5;
     });
 
+  // =========================
+// LEYENDA
+// =========================
+
+y += 4;
+
+doc.setFont("helvetica", "bold");
+doc.setFontSize(7.5);
+
+doc.text(
+    "*Leyenda:",
+    20,
+    y
+);
+
+y += 4;
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(7);
+
+doc.text(
+    "Muy de acuerdo 5; De acuerdo 4; Ni acuerdo ni desacuerdo 3; En desacuerdo 2; Muy en desacuerdo 1.",
+    20,
+    y
+);
+
     // =========================
-    // PIE DE PAGINA + NUMERO
+    // PIE DE PAGINA
     // =========================
 
-    const totalPages = doc.internal.getNumberOfPages();
+    const totalPages =
+        doc.internal.getNumberOfPages();
 
     for (let i = 1; i <= totalPages; i++) {
+
         doc.setPage(i);
 
         doc.setDrawColor(180);
-        doc.line(10, pageHeight - 15, 200, pageHeight - 15);
+
+        doc.line(
+            10,
+            pageHeight - 15,
+            200,
+            pageHeight - 15
+        );
 
         doc.setFontSize(7);
         doc.setTextColor(120);
@@ -612,6 +1093,7 @@ const generarPDF = async (encuesta) => {
 
     doc.save(`${encuesta.FullName}.pdf`);
 };
+
 const buscarPorDepartamento = async (id) => {
 
     if (!id) {
@@ -667,13 +1149,13 @@ const buscarPorDepartamento = async (id) => {
         );
     }
 };
+useEffect(() => {
 
-    useEffect(() => {
+    fetchEncuestas();
+    fetchDepartamentos();
+    fetchEncuestasDisponibles();
 
-        fetchEncuestas();
-        fetchDepartamentos();
-
-    }, []);
+}, []);
 
     // 🔹 PAGINACIÓN
     const indexUltimo = paginaActual * registrosPorPagina;
@@ -687,7 +1169,55 @@ const buscarPorDepartamento = async (id) => {
     const totalPaginas = Math.ceil(
         encuestas.length / registrosPorPagina
     );
+const buscarPorEncuesta = async (idEncuesta) => {
 
+    // 🔹 SI NO HAY ENCUESTA
+    if (!idEncuesta) {
+
+        fetchEncuestas();
+        return;
+    }
+
+    try {
+
+        Swal.fire({
+            title: 'Filtrando encuesta...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // 🔹 CONSUMIR API
+        const res = await axios.get(
+           API.getPorTipoEnccuesta(idEncuesta)
+        );
+
+        // 🔹 DATA
+        const data = res.data || [];
+
+        setEncuestas(data);
+
+        setPaginaActual(1);
+
+        Swal.close();
+
+    } catch (error) {
+
+        console.log(error);
+
+        Swal.close();
+
+        // 🔹 MENSAJE DEL BACKEND
+        const mensaje =
+            error.response?.data?.mensaje ||
+            'No se pudo obtener la encuesta';
+
+        Swal.fire(
+            'Error',
+            mensaje,
+            'error'
+        );
+    }
+};
     // 🔹 EXPORTAR EXCEL
     const exportarExcel = () => {
 
@@ -826,6 +1356,45 @@ const buscarPorDepartamento = async (id) => {
 
                     </div>
 
+
+<div className={styles2.filterBox}>
+
+    <label>
+        Filtrar por encuesta
+    </label>
+
+    <select
+        value={encuestaSeleccionada}
+        onChange={(e) => {
+
+            setEncuestaSeleccionada(
+                e.target.value
+            );
+
+            buscarPorEncuesta(
+                e.target.value
+            );
+        }}
+    >
+
+        <option value="">
+            Todas las encuestas
+        </option>
+
+        {encuestasDisponibles.map((encuesta) => (
+
+            <option
+                key={encuesta.Id}
+                value={encuesta.Id}
+            >
+                {encuesta.Name}
+            </option>
+
+        ))}
+
+    </select>
+
+</div>
                 </div>
 
                 {/* TABLA */}
