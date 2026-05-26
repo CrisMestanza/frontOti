@@ -920,18 +920,17 @@ const generarPDF = async (encuesta) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
 
-doc.text(
-    "Detalle de las secciones, preguntas y valoración:",
-    20,
-    y
-);
+    doc.text(
+        "Detalle de las secciones, preguntas y valoración:",
+        20,
+        y
+    );
 
-// PUNTAJE EN LA MISMA LÍNEA A LA DERECHA
-doc.text(
-    "Puntaje",
-    165,
-    y
-);
+    doc.text(
+        "Puntaje",
+        165,
+        y
+    );
 
     y += 4;
 
@@ -976,8 +975,6 @@ doc.text(
             y + 4
         );
 
-        // MÁS PEGADO A LA TABLA
-
         y += 5.5;
 
         autoTable(doc, {
@@ -1018,36 +1015,86 @@ doc.text(
             }
         });
 
-        // BLOQUES MÁS JUNTOS
-
         y = doc.lastAutoTable.finalY + 1.5;
     });
 
-  // =========================
-// LEYENDA
-// =========================
+    // =========================
+    // TOTAL
+    // =========================
 
-y += 4;
+    autoTable(doc, {
 
-doc.setFont("helvetica", "bold");
-doc.setFontSize(7.5);
+        startY: y + 2,
 
-doc.text(
-    "*Leyenda:",
-    20,
-    y
-);
+        margin: {
+            left: 20
+        },
 
-y += 4;
+        tableWidth: 165,
 
-doc.setFont("helvetica", "normal");
-doc.setFontSize(7);
+        body: [[
+            {
+                content: "TOTAL",
+                styles: {
+                    fontStyle: "bold",
+                    halign: "right"
+                }
+            },
+            {
+                content: String(
+                    encuesta.puntaje_total || 0
+                ),
+                styles: {
+                    fontStyle: "bold",
+                    halign: "center"
+                }
+            }
+        ]],
 
-doc.text(
-    "Muy de acuerdo 5; De acuerdo 4; Ni acuerdo ni desacuerdo 3; En desacuerdo 2; Muy en desacuerdo 1.",
-    20,
-    y
-);
+        theme: "grid",
+
+        styles: {
+            fontSize: 7.5,
+            cellPadding: 1.5,
+            lineColor: [0, 0, 0],
+            lineWidth: 0.2
+        },
+
+        columnStyles: {
+            0: {
+                cellWidth: 140
+            },
+            1: {
+                cellWidth: 25
+            }
+        }
+    });
+
+    y = doc.lastAutoTable.finalY + 6;
+
+    // =========================
+    // LEYENDA
+    // =========================
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+
+    doc.text(
+        "*Leyenda:",
+        20,
+        y
+    );
+
+    y += 4;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+
+    doc.text(
+        "Muy de acuerdo 5; De acuerdo 4; Ni acuerdo ni desacuerdo 3; En desacuerdo 2; Muy en desacuerdo 1.",
+        20,
+        y
+    );
 
     // =========================
     // PIE DE PAGINA
