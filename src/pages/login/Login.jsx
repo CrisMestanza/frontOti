@@ -37,7 +37,8 @@ export default function Login() {
 
     setUser(user);
 
-    navigate(user.rol === "OTI" ? "/dashboard" : "/encuestas");
+    const destinos = { OTI: "/dashboard", CAJA: "/ordenar-pdf" };
+    navigate(destinos[user.rol] ?? "/encuestas");
   };
 
   return (

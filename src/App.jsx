@@ -8,6 +8,7 @@ import PagosPendientes from "./pages/pagosComedor/PagosComedor";
 import Encuestas from "./pages/encuestas/Encuestas";
 import Login from "./pages/login/Login";
 import Logout from "./pages/logout/Logout";
+import OrdenarPdf from "./pages/ordenarPdf/OrdenarPdf";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -75,6 +76,16 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["OTI"]}>
               <PagosPendientes />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 📄 ORDENAR PDF */}
+        <Route
+          path="/ordenar-pdf"
+          element={
+            <ProtectedRoute allowedRoles={["OTI", "CAJA"]}>
+              <OrdenarPdf />
             </ProtectedRoute>
           }
         />
