@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import { loginUser, setUser } from "../../auth";
 import Swal from "sweetalert2";
+import logo from "../../assets/logo.png";
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
@@ -49,7 +50,7 @@ export default function Login() {
 
         <div className={styles.card}>
           <div className={styles.logoBox}>
-            <img src="src/assets/logo.png" alt="logo" />
+            <img src={logo} alt="logo" />
           </div>
 
           <h1 className={styles.title}>
