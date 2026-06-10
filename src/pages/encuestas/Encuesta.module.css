@@ -237,7 +237,9 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
-
+.cambiar{
+    font-size: 300px !important;
+}
 .pagination span {
     font-size: 13px;
     font-weight: 600;

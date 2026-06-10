@@ -94,9 +94,7 @@ const generarPDFGeneral = async () => {
         const data = res.data;
 
         if (!data || data.length === 0) {
-
             Swal.close();
-
             return Swal.fire(
                 'Aviso',
                 'No hay encuestas disponibles',
@@ -109,376 +107,151 @@ const generarPDFGeneral = async () => {
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
 
-        // =========================
-        // RECORRER ENCUESTAS
-        // =========================
-
         for (let i = 0; i < data.length; i++) {
 
             const encuesta = data[i];
-
             let y = 8;
 
-            if (i > 0) {
-                doc.addPage();
-            }
+            if (i > 0) doc.addPage();
 
-            // =========================
-            // OPACIDAD ENCABEZADO
-            // =========================
+            doc.setGState(new doc.GState({ opacity: 0.75 }));
 
-            doc.setGState(
-                new doc.GState({ opacity: 0.75 })
-            );
+            doc.addImage(logoUNSM, "PNG", 10, 2, 25, 30);
 
-            // =========================
-            // LOGO
-            // =========================
-
-            doc.addImage(
-                logoUNSM,
-                "PNG",
-                10,
-                2,
-                25,
-                30
-            );
-
-            // =========================
-            // ENCABEZADO
-            // =========================
-
+            // ========================= ENCABEZADO =========================
             doc.setFont("helvetica", "bold");
             doc.setFontSize(16);
-
             doc.setTextColor(70);
 
-            doc.text(
-                "UNIVERSIDAD NACIONAL DE SAN MARTÍN",
-                pageWidth / 2,
-                10,
-                { align: "center" }
-            );
+            doc.text("UNIVERSIDAD NACIONAL DE SAN MARTÍN", pageWidth / 2, 10, { align: "center" });
 
-            doc.line(
-                pageWidth / 2 - 58,
-                11,
-                pageWidth / 2 + 58,
-                11
-            );
+            doc.line(pageWidth / 2 - 58, 11, pageWidth / 2 + 58, 11);
 
             doc.setFontSize(13);
+            doc.text("VICERRECTORADO ACADÉMICO", pageWidth / 2, 16, { align: "center" });
 
-            doc.text(
-                "VICERRECTORADO ACADÉMICO",
-                pageWidth / 2,
-                16,
-                { align: "center" }
-            );
-
-            doc.line(
-                pageWidth / 2 - 36,
-                17,
-                pageWidth / 2 + 36,
-                17
-            );
+            doc.line(pageWidth / 2 - 36, 17, pageWidth / 2 + 36, 17);
 
             doc.setFontSize(9);
+            doc.text("DIRECCIÓN DE ASUNTOS ACADÉMICOS", pageWidth / 2, 22, { align: "center" });
 
-            doc.text(
-                "DIRECCIÓN DE ASUNTOS ACADÉMICOS",
-                pageWidth / 2,
-                22,
-                { align: "center" }
-            );
+            doc.line(pageWidth / 2 - 32, 23, pageWidth / 2 + 32, 23);
 
-            doc.line(
-                pageWidth / 2 - 32,
-                23,
-                pageWidth / 2 + 32,
-                23
-            );
-
-            // =========================
-            // FECHA
-            // =========================
-
+            // ========================= FECHA =========================
             const fecha = new Date();
 
             doc.setFontSize(8);
-
             doc.setFont("helvetica", "bold");
-
-            doc.text(
-                "OBTENIDO",
-                185,
-                12
-            );
+            doc.text("OBTENIDO", 185, 12);
 
             doc.setFont("helvetica", "normal");
+            doc.text(fecha.toLocaleDateString(), 187, 17);
+            doc.text(fecha.toLocaleTimeString(), 188, 22);
 
-            doc.text(
-                fecha.toLocaleDateString(),
-                187,
-                17
-            );
-
-            doc.text(
-                fecha.toLocaleTimeString(),
-                190,
-                22
-            );
-
-            // =========================
-            // RESET OPACIDAD
-            // =========================
-
-            doc.setGState(
-                new doc.GState({ opacity: 1 })
-            );
-
-            // =========================
-            // LINEA PRINCIPAL
-            // =========================
+            doc.setGState(new doc.GState({ opacity: 1 }));
 
             doc.setDrawColor(80, 120, 70);
-
             doc.setLineWidth(0.5);
-
-            doc.line(
-                10,
-                32,
-                200,
-                32
-            );
+            doc.line(10, 32, 200, 32);
 
             y = 40;
 
-            // =========================
-            // DATOS
-            // =========================
-
+            // ========================= DATOS =========================
             doc.setFontSize(9);
-
             doc.setTextColor(0);
 
             doc.setFont("helvetica", "bold");
-
-            doc.text(
-                "Encuesta",
-                20,
-                y
-            );
-
-            doc.text(
-                ":",
-                75,
-                y
-            );
+            doc.text("Encuesta", 20, y);
+            doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
-
-            doc.text(
-                encuesta.nombre_encuesta || "-",
-                78,
-                y
-            );
+            doc.text(encuesta.nombre_encuesta || "-", 78, y);
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
-
-            doc.text(
-                "Departamento Académico",
-                20,
-                y
-            );
-
-            doc.text(
-                ":",
-                75,
-                y
-            );
+            doc.text("Departamento Académico", 20, y);
+            doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
-
-            doc.text(
-                encuesta.departamento_academico || "-",
-                78,
-                y
-            );
+            doc.text(encuesta.departamento_academico || "-", 78, y);
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
-
-            doc.text(
-                "Código",
-                20,
-                y
-            );
-
-            doc.text(
-                ":",
-                75,
-                y
-            );
+            doc.text("Código", 20, y);
+            doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
-
-            doc.text(
-                encuesta.UserName || "-",
-                78,
-                y
-            );
+            doc.text(encuesta.UserName || "-", 78, y);
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
-
-            doc.text(
-                "Docente",
-                20,
-                y
-            );
-
-            doc.text(
-                ":",
-                75,
-                y
-            );
+            doc.text("Docente", 20, y);
+            doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
-
-            doc.text(
-                encuesta.FullName || "-",
-                78,
-                y
-            );
+            doc.text(encuesta.FullName || "-", 78, y);
 
             y += 6;
 
             doc.setFont("helvetica", "bold");
+            doc.text("Semestre", 20, y);
+            doc.text(":", 75, y);
 
-            doc.text(
-                "Semestre",
-                20,
-                y
-            );
+            doc.setFont("helvetica", "normal");
+            doc.text("2026-I", 78, y);
 
-            doc.text(
-                ":",
-                75,
-                y
-            );
+            y += 6;
+
+            // ========================= AQUÍ EL CAMBIO =========================
+            doc.setFont("helvetica", "bold");
+            doc.text("PBM", 20, y);
+            doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
 
-            doc.text(
-                "2026-I",
-                78,
-                y
-            );
+            // 👇 AQUÍ YA VA EL VALOR REAL (NO TEXTO)
+            doc.text(String(encuesta.PBM || 0), 78, y);
 
             y += 8;
 
-            // =========================
-            // TITULO TABLAS
-            // =========================
-
+            // ========================= TABLAS =========================
             doc.setFont("helvetica", "bold");
-
             doc.setFontSize(8);
 
-            doc.text(
-                "Detalle de las secciones, preguntas y valoración:",
-                20,
-                y
-            );
-
-            doc.text(
-                "Puntaje",
-                165,
-                y
-            );
+            doc.text("Detalle de las secciones, preguntas y valoración:", 20, y);
+            doc.text("Puntaje", 165, y);
 
             y += 4;
-
-            // =========================
-            // TABLAS
-            // =========================
 
             encuesta.categorias?.forEach((categoria) => {
 
                 const tituloCategoria =
-                    categoria.amarrillo
-                        ?.split(":")[0]
-                        ?.trim();
+                    categoria.amarrillo?.split(":")[0]?.trim();
 
-                // =========================
-                // TITULO SECCION
-                // =========================
-
-                doc.setFillColor(
-                    220,
-                    220,
-                    220
-                );
-
-                doc.rect(
-                    20,
-                    y,
-                    165,
-                    6,
-                    "F"
-                );
-
+                doc.setFillColor(220, 220, 220);
+                doc.rect(20, y, 165, 6, "F");
                 doc.setDrawColor(0);
+                doc.rect(20, y, 165, 6);
 
-                doc.rect(
-                    20,
-                    y,
-                    165,
-                    6
-                );
-
-                doc.setFont(
-                    "helvetica",
-                    "bold"
-                );
-
+                doc.setFont("helvetica", "bold");
                 doc.setFontSize(7.5);
 
-                doc.text(
-                    `Sección: ${tituloCategoria}`,
-                    23,
-                    y + 4
-                );
+                doc.text(`Sección: ${tituloCategoria}`, 23, y + 4);
 
                 y += 5.5;
 
-                // =========================
-                // TABLA
-                // =========================
-
                 autoTable(doc, {
-
                     startY: y,
-
-                    margin: {
-                        left: 20
-                    },
-
+                    margin: { left: 20 },
                     tableWidth: 165,
-
-                    body:
-                        categoria.preguntas?.map((p, index) => [
-                            `${index + 1}. ${p.pregunta}`,
-                            p.Puntuacion
-                        ]) || [],
-
+                    body: categoria.preguntas?.map((p, i) => [
+                        `${i + 1}. ${p.pregunta}`,
+                        p.Puntuacion
+                    ]) || [],
                     theme: "grid",
-
                     styles: {
                         fontSize: 7,
                         cellPadding: 1.5,
@@ -486,100 +259,47 @@ const generarPDFGeneral = async () => {
                         lineWidth: 0.2,
                         minCellHeight: 5
                     },
-
                     columnStyles: {
-                        0: {
-                            cellWidth: 140
-                        },
-                        1: {
-                            halign: "center",
-                            cellWidth: 25,
-                            fontStyle: "bold"
-                        }
+                        0: { cellWidth: 140 },
+                        1: { halign: "center", cellWidth: 25, fontStyle: "bold" }
                     }
                 });
 
                 y = doc.lastAutoTable.finalY + 1.5;
             });
 
-            // =========================
-            // TOTAL
-            // =========================
-
+            // ========================= TOTAL =========================
             autoTable(doc, {
-
                 startY: y + 2,
-
-                margin: {
-                    left: 20
-                },
-
+                margin: { left: 20 },
                 tableWidth: 165,
-
                 body: [[
-                    {
-                        content: "TOTAL",
-                        styles: {
-                            fontStyle: "bold",
-                            halign: "right"
-                        }
-                    },
-                    {
-                        content: String(
-                            encuesta.puntaje_total || 0
-                        ),
-                        styles: {
-                            fontStyle: "bold",
-                            halign: "center"
-                        }
-                    }
+                    { content: "TOTAL", styles: { fontStyle: "bold", halign: "right" } },
+                    { content: String(encuesta.puntaje_total || 0), styles: { fontStyle: "bold", halign: "center" } }
                 ]],
-
                 theme: "grid",
-
                 styles: {
                     fontSize: 7.5,
                     cellPadding: 1.5,
                     lineColor: [0, 0, 0],
                     lineWidth: 0.2
                 },
-
                 columnStyles: {
-                    0: {
-                        cellWidth: 140
-                    },
-                    1: {
-                        cellWidth: 25
-                    }
+                    0: { cellWidth: 140 },
+                    1: { cellWidth: 25 }
                 }
             });
 
             y = doc.lastAutoTable.finalY + 6;
 
-            // =========================
-            // LEYENDA
-            // =========================
-
-            doc.setFont(
-                "helvetica",
-                "bold"
-            );
-
+            // ========================= LEYENDA =========================
+            doc.setFont("helvetica", "bold");
             doc.setFontSize(7.5);
-
-            doc.text(
-                "*Leyenda:",
-                20,
-                y
-            );
+            doc.text("*Leyenda:", 20, y);
 
             y += 4;
 
-            doc.setFont(
-                "helvetica",
-                "normal"
-            );
-
+            doc.setFont("helvetica", "normal");
             doc.setFontSize(7);
 
             doc.text(
@@ -589,28 +309,17 @@ const generarPDFGeneral = async () => {
             );
         }
 
-        // =========================
-        // PIE DE PAGINA
-        // =========================
-
-        const totalPages =
-            doc.internal.getNumberOfPages();
+        // ========================= PIE =========================
+        const totalPages = doc.internal.getNumberOfPages();
 
         for (let i = 1; i <= totalPages; i++) {
 
             doc.setPage(i);
 
             doc.setDrawColor(180);
-
-            doc.line(
-                10,
-                pageHeight - 15,
-                200,
-                pageHeight - 15
-            );
+            doc.line(10, pageHeight - 15, 200, pageHeight - 15);
 
             doc.setFontSize(7);
-
             doc.setTextColor(120);
 
             doc.text(
@@ -628,25 +337,12 @@ const generarPDFGeneral = async () => {
             );
         }
 
-        // =========================
-        // DESCARGAR
-        // =========================
-
-        doc.save(
-            "Reporte-General-Encuestas.pdf"
-        );
-
+        doc.save("Reporte-General-Encuestas.pdf");
         Swal.close();
 
     } catch (error) {
-
         Swal.close();
-
-        Swal.fire(
-            'Error',
-            'No se pudo generar el PDF',
-            'error'
-        );
+        Swal.fire('Error', 'No se pudo generar el PDF', 'error');
     }
 };
     // 🔹 DEPARTAMENTOS
@@ -704,7 +400,6 @@ const buscarPorDocente = async () => {
         );
     }
 };
-
 const generarPDF = async (encuesta) => {
 
     const doc = new jsPDF("p", "mm", "a4");
@@ -714,131 +409,48 @@ const generarPDF = async (encuesta) => {
 
     let y = 8;
 
-    // =========================
-    // OPACIDAD ENCABEZADO
-    // =========================
-
     doc.setGState(new doc.GState({ opacity: 0.75 }));
+    doc.addImage(logoUNSM, "PNG", 10, 2, 25, 30);
 
-    // =========================
-    // LOGO
-    // =========================
-
-    doc.addImage(
-        logoUNSM,
-        "PNG",
-        10,
-        2,
-        25,
-        30
-    );
-
-    // =========================
-    // ENCABEZADO
-    // =========================
-
+    // ========================= ENCABEZADO =========================
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-
     doc.setTextColor(70);
 
-    doc.text(
-        "UNIVERSIDAD NACIONAL DE SAN MARTÍN",
-        pageWidth / 2,
-        10,
-        { align: "center" }
-    );
+    doc.text("UNIVERSIDAD NACIONAL DE SAN MARTÍN", pageWidth / 2, 10, { align: "center" });
 
-    doc.line(
-        pageWidth / 2 - 58,
-        11,
-        pageWidth / 2 + 58,
-        11
-    );
+    doc.line(pageWidth / 2 - 58, 11, pageWidth / 2 + 58, 11);
 
     doc.setFontSize(13);
+    doc.text("VICERRECTORADO ACADÉMICO", pageWidth / 2, 16, { align: "center" });
 
-    doc.text(
-        "VICERRECTORADO ACADÉMICO",
-        pageWidth / 2,
-        16,
-        { align: "center" }
-    );
-
-    doc.line(
-        pageWidth / 2 - 36,
-        17,
-        pageWidth / 2 + 36,
-        17
-    );
+    doc.line(pageWidth / 2 - 36, 17, pageWidth / 2 + 36, 17);
 
     doc.setFontSize(9);
+    doc.text("DIRECCIÓN DE ASUNTOS ACADÉMICOS", pageWidth / 2, 22, { align: "center" });
 
-    doc.text(
-        "DIRECCIÓN DE ASUNTOS ACADÉMICOS",
-        pageWidth / 2,
-        22,
-        { align: "center" }
-    );
+    doc.line(pageWidth / 2 - 32, 23, pageWidth / 2 + 32, 23);
 
-    doc.line(
-        pageWidth / 2 - 32,
-        23,
-        pageWidth / 2 + 32,
-        23
-    );
-
-    // =========================
-    // FECHA
-    // =========================
-
+    // ========================= FECHA =========================
     const fecha = new Date();
 
     doc.setFontSize(8);
-
     doc.setFont("helvetica", "bold");
     doc.text("OBTENIDO", 185, 12);
 
     doc.setFont("helvetica", "normal");
-
-    doc.text(
-        fecha.toLocaleDateString(),
-        187,
-        17
-    );
-
-    doc.text(
-        fecha.toLocaleTimeString(),
-        190,
-        22
-    );
-
-    // =========================
-    // RESET OPACIDAD
-    // =========================
+    doc.text(fecha.toLocaleDateString(), 187, 17);
+    doc.text(fecha.toLocaleTimeString(), 188, 22);
 
     doc.setGState(new doc.GState({ opacity: 1 }));
 
-    // =========================
-    // LINEA PRINCIPAL
-    // =========================
-
     doc.setDrawColor(80, 120, 70);
     doc.setLineWidth(0.5);
-
-    doc.line(
-        10,
-        32,
-        200,
-        32
-    );
+    doc.line(10, 32, 200, 32);
 
     y = 40;
 
-    // =========================
-    // DATOS
-    // =========================
-
+    // ========================= DATOS =========================
     doc.setFontSize(9);
     doc.setTextColor(0);
 
@@ -847,32 +459,16 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-
-    doc.text(
-        encuesta.nombre_encuesta || "-",
-        78,
-        y
-    );
+    doc.text(encuesta.nombre_encuesta || "-", 78, y);
 
     y += 6;
 
     doc.setFont("helvetica", "bold");
-
-    doc.text(
-        "Departamento Académico",
-        20,
-        y
-    );
-
+    doc.text("Departamento Académico", 20, y);
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-
-    doc.text(
-        encuesta.departamento_academico || "-",
-        78,
-        y
-    );
+    doc.text(encuesta.departamento_academico || "-", 78, y);
 
     y += 6;
 
@@ -881,12 +477,7 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-
-    doc.text(
-        encuesta.UserName || "-",
-        78,
-        y
-    );
+    doc.text(encuesta.UserName || "-", 78, y);
 
     y += 6;
 
@@ -895,15 +486,11 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-
-    doc.text(
-        encuesta.FullName || "-",
-        78,
-        y
-    );
+    doc.text(encuesta.FullName || "-", 78, y);
 
     y += 6;
 
+    // ========================= SEMESTRE =========================
     doc.setFont("helvetica", "bold");
     doc.text("Semestre", 20, y);
     doc.text(":", 75, y);
@@ -911,90 +498,53 @@ const generarPDF = async (encuesta) => {
     doc.setFont("helvetica", "normal");
     doc.text("2026-I", 78, y);
 
+    y += 6;
+
+    // ========================= PBM CORREGIDO =========================
+    doc.setFont("helvetica", "bold");
+    doc.text("PBM", 20, y);
+    doc.text(":", 75, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(String(encuesta.PBM || 0), 78, y); // ✅ CORRECTO
+
     y += 8;
 
-    // =========================
-    // TITULO TABLAS
-    // =========================
-
+    // ========================= TABLAS =========================
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
 
-    doc.text(
-        "Detalle de las secciones, preguntas y valoración:",
-        20,
-        y
-    );
-
-    doc.text(
-        "Puntaje",
-        165,
-        y
-    );
+    doc.text("Detalle de las secciones, preguntas y valoración:", 20, y);
+    doc.text("Puntaje", 165, y);
 
     y += 4;
-
-    // =========================
-    // TABLAS
-    // =========================
 
     encuesta.categorias?.forEach((categoria) => {
 
         const tituloCategoria =
-            categoria.amarrillo
-                ?.split(":")[0]
-                ?.trim();
-
-        // BLOQUE TITULO
+            categoria.amarrillo?.split(":")[0]?.trim();
 
         doc.setFillColor(220, 220, 220);
-
-        doc.rect(
-            20,
-            y,
-            165,
-            6,
-            "F"
-        );
-
+        doc.rect(20, y, 165, 6, "F");
         doc.setDrawColor(0);
-
-        doc.rect(
-            20,
-            y,
-            165,
-            6
-        );
+        doc.rect(20, y, 165, 6);
 
         doc.setFont("helvetica", "bold");
         doc.setFontSize(7.5);
 
-        doc.text(
-            `Sección: ${tituloCategoria}`,
-            23,
-            y + 4
-        );
+        doc.text(`Sección: ${tituloCategoria}`, 23, y + 4);
 
         y += 5.5;
 
         autoTable(doc, {
-
             startY: y,
-
-            margin: {
-                left: 20
-            },
-
+            margin: { left: 20 },
             tableWidth: 165,
-
-            body:
-                categoria.preguntas?.map((p, i) => [
-                    `${i + 1}. ${p.pregunta}`,
-                    p.Puntuacion
-                ]) || [],
-
+            body: categoria.preguntas?.map((p, i) => [
+                `${i + 1}. ${p.pregunta}`,
+                p.Puntuacion
+            ]) || [],
             theme: "grid",
-
             styles: {
                 fontSize: 7,
                 cellPadding: 1.5,
@@ -1002,88 +552,43 @@ const generarPDF = async (encuesta) => {
                 lineWidth: 0.2,
                 minCellHeight: 5
             },
-
             columnStyles: {
-                0: {
-                    cellWidth: 140
-                },
-                1: {
-                    halign: "center",
-                    cellWidth: 25,
-                    fontStyle: "bold"
-                }
+                0: { cellWidth: 140 },
+                1: { halign: "center", cellWidth: 25, fontStyle: "bold" }
             }
         });
 
         y = doc.lastAutoTable.finalY + 1.5;
     });
 
-    // =========================
-    // TOTAL
-    // =========================
-
+    // ========================= TOTAL =========================
     autoTable(doc, {
-
         startY: y + 2,
-
-        margin: {
-            left: 20
-        },
-
+        margin: { left: 20 },
         tableWidth: 165,
-
         body: [[
-            {
-                content: "TOTAL",
-                styles: {
-                    fontStyle: "bold",
-                    halign: "right"
-                }
-            },
-            {
-                content: String(
-                    encuesta.puntaje_total || 0
-                ),
-                styles: {
-                    fontStyle: "bold",
-                    halign: "center"
-                }
-            }
+            { content: "TOTAL", styles: { fontStyle: "bold", halign: "right" } },
+            { content: String(encuesta.puntaje_total || 0), styles: { fontStyle: "bold", halign: "center" } }
         ]],
-
         theme: "grid",
-
         styles: {
             fontSize: 7.5,
             cellPadding: 1.5,
             lineColor: [0, 0, 0],
             lineWidth: 0.2
         },
-
         columnStyles: {
-            0: {
-                cellWidth: 140
-            },
-            1: {
-                cellWidth: 25
-            }
+            0: { cellWidth: 140 },
+            1: { cellWidth: 25 }
         }
     });
 
     y = doc.lastAutoTable.finalY + 6;
 
-    // =========================
-    // LEYENDA
-    // =========================
-
+    // ========================= LEYENDA =========================
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.5);
-
-    doc.text(
-        "*Leyenda:",
-        20,
-        y
-    );
+    doc.text("*Leyenda:", 20, y);
 
     y += 4;
 
@@ -1096,25 +601,15 @@ const generarPDF = async (encuesta) => {
         y
     );
 
-    // =========================
-    // PIE DE PAGINA
-    // =========================
-
-    const totalPages =
-        doc.internal.getNumberOfPages();
+    // ========================= PIE DE PAGINA =========================
+    const totalPages = doc.internal.getNumberOfPages();
 
     for (let i = 1; i <= totalPages; i++) {
 
         doc.setPage(i);
 
         doc.setDrawColor(180);
-
-        doc.line(
-            10,
-            pageHeight - 15,
-            200,
-            pageHeight - 15
-        );
+        doc.line(10, pageHeight - 15, 200, pageHeight - 15);
 
         doc.setFontSize(7);
         doc.setTextColor(120);
@@ -1134,13 +629,8 @@ const generarPDF = async (encuesta) => {
         );
     }
 
-    // =========================
-    // DESCARGAR
-    // =========================
-
     doc.save(`${encuesta.FullName}.pdf`);
 };
-
 const buscarPorDepartamento = async (id) => {
 
     if (!id) {
@@ -1556,7 +1046,7 @@ const buscarPorEncuesta = async (idEncuesta) => {
 
         <div class="cardInfo highlight">
             <label>Puntaje total</label>
-            <h3>${encuesta.puntaje_total}</h3>
+            <h3 id="cambiar">${encuesta.puntaje_total}</h3>
         </div>
 
     </div>
@@ -1639,10 +1129,14 @@ const buscarPorEncuesta = async (idEncuesta) => {
 
 .cardInfo h3{
     margin:4px 0 0 0;
-    font-size:15px;
+    font-size:14px ;
     color:#111827;
     font-weight:600;
 }
+    #cambiar{
+        font-size:19px !important ;
+
+    }
 
 /* highlight score */
 .highlight{
