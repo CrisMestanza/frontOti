@@ -127,7 +127,7 @@
   width: 73%;
   position: relative;
   overflow: hidden;
-  background-image: url("src/assets/unsm.jpg");
+  background-image: url("../../assets/unsm.jpg");
   background-size: cover;
   background-position: center;
   filter: saturate(1.1) contrast(1.05);

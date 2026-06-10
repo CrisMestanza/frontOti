@@ -1,6 +1,7 @@
 export const USERS = [
   { usuario: "Jorge", password: "Jorge123", rol: "OTI" },
   { usuario: "academico", password: "123", rol: "ASUNTOS_ACADEMICOS" },
+  { usuario: "caja", password: "Caja2026", rol: "CAJA" },
 ];
 
 export function loginUser(usuario, password) {
