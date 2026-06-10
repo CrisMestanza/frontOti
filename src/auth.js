@@ -1,6 +1,6 @@
 export const USERS = [
   { usuario: "Jorge", password: "Jorge123", rol: "OTI" },
-  { usuario: "academico", password: "123", rol: "ASUNTOS_ACADEMICOS" },
+  { usuario: "AsuntosAcademicos", password: "Ac4dem1co#", rol: "ASUNTOS_ACADEMICOS" },
   { usuario: "caja", password: "Caja2026", rol: "CAJA" },
 ];
 
