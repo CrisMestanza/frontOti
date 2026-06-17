@@ -90,8 +90,7 @@ const generarPDFGeneral = async () => {
             didOpen: () => Swal.showLoading()
         });
 
-        const res = await axios.get(API.getEncuesta);
-        const data = res.data;
+        const data = encuestas;
 
         if (!data || data.length === 0) {
             Swal.close();
@@ -500,17 +499,15 @@ const generarPDF = async (encuesta) => {
 
     y += 6;
 
-    // ========================= PBM CORREGIDO =========================
     doc.setFont("helvetica", "bold");
     doc.text("PBM", 20, y);
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text(String(encuesta.PBM || 0), 78, y); // ✅ CORRECTO
+    doc.text(String(encuesta.PBM || 0), 78, y);
 
     y += 8;
 
-    // ========================= TABLAS =========================
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
 
