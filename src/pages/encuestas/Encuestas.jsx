@@ -5,7 +5,7 @@ import SideNav from '../../components/SideNav';
 import TopNav from '../../components/TopNav';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import logoUNSM from "../../assets/logo.png";
 
@@ -28,6 +28,16 @@ const [encuestaSeleccionada, setEncuestaSeleccionada] = useState("");
     // 🔹 PAGINACIÓN
     const [paginaActual, setPaginaActual] = useState(1);
     const registrosPorPagina = 10;
+
+    // 🔹 ORDEN POR TOTAL
+    const [ordenTotal, setOrdenTotal] = useState(null); // null | 'asc' | 'desc'
+
+    const toggleOrdenTotal = () => {
+        setOrdenTotal((actual) =>
+            actual === 'asc' ? 'desc' : 'asc'
+        );
+        setPaginaActual(1);
+    };
 const fetchEncuestasDisponibles = async () => {
 
     try {
@@ -691,17 +701,30 @@ useEffect(() => {
 
 }, []);
 
+    // 🔹 ENCUESTAS ORDENADAS POR TOTAL
+    const encuestasOrdenadas = useMemo(() => {
+
+        if (!ordenTotal) return encuestas;
+
+        return [...encuestas].sort((a, b) =>
+            ordenTotal === 'asc'
+                ? (a.puntaje_total || 0) - (b.puntaje_total || 0)
+                : (b.puntaje_total || 0) - (a.puntaje_total || 0)
+        );
+
+    }, [encuestas, ordenTotal]);
+
     // 🔹 PAGINACIÓN
     const indexUltimo = paginaActual * registrosPorPagina;
     const indexPrimero = indexUltimo - registrosPorPagina;
 
-    const datosActuales = encuestas.slice(
+    const datosActuales = encuestasOrdenadas.slice(
         indexPrimero,
         indexUltimo
     );
 
     const totalPaginas = Math.ceil(
-        encuestas.length / registrosPorPagina
+        encuestasOrdenadas.length / registrosPorPagina
     );
 const buscarPorEncuesta = async (idEncuesta) => {
 
@@ -944,7 +967,13 @@ const buscarPorEncuesta = async (idEncuesta) => {
                                     <th>Codigo</th>
                                     <th>Docente</th>
                                     <th>Departamento</th>
-                                    <th>Total</th>
+                                    <th
+                                        onClick={toggleOrdenTotal}
+                                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                                        title="Ordenar por total"
+                                    >
+                                        Total {ordenTotal === 'asc' ? '↑' : ordenTotal === 'desc' ? '↓' : ''}
+                                    </th>
                                     <th>Acciones</th>
 
                                 </tr>
