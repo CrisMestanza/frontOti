@@ -27,7 +27,7 @@ const [encuestaSeleccionada, setEncuestaSeleccionada] = useState("");
 
     // 🔹 PAGINACIÓN
     const [paginaActual, setPaginaActual] = useState(1);
-    const registrosPorPagina = 10;
+    const registrosPorPagina = 50;
 
     // 🔹 ORDEN POR TOTAL
     const [ordenTotal, setOrdenTotal] = useState(null); // null | 'asc' | 'desc'
