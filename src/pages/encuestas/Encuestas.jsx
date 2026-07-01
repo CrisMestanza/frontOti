@@ -638,22 +638,25 @@ const generarPDF = async (encuesta) => {
 
     doc.save(`${encuesta.FullName}.pdf`);
 };
-const buscarPorDepartamento = async (id) => {
+// 🔹 FILTRO COMBINADO: departamento y/o encuesta (se puede aplicar uno, otro, o ambos a la vez)
+const aplicarFiltros = async (departamento, encuesta) => {
 
-    if (!id) {
+    // 🔥 SI NO HAY NINGÚN FILTRO, CARGA TODO
+    if (!departamento && !encuesta) {
         fetchEncuestas();
         return;
     }
+
     try {
 
         Swal.fire({
-            title: 'Filtrando departamento...',
+            title: 'Filtrando encuestas...',
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
 
         const res = await axios.get(
-            API.getEncuestaDepartamento(id)
+            API.getEncuestaFiltro(departamento, encuesta)
         );
 
         // ✅ SI EL BACKEND DEVUELVE MENSAJE
@@ -726,55 +729,6 @@ useEffect(() => {
     const totalPaginas = Math.ceil(
         encuestasOrdenadas.length / registrosPorPagina
     );
-const buscarPorEncuesta = async (idEncuesta) => {
-
-    // 🔹 SI NO HAY ENCUESTA
-    if (!idEncuesta) {
-
-        fetchEncuestas();
-        return;
-    }
-
-    try {
-
-        Swal.fire({
-            title: 'Filtrando encuesta...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
-
-        // 🔹 CONSUMIR API
-        const res = await axios.get(
-           API.getPorTipoEnccuesta(idEncuesta)
-        );
-
-        // 🔹 DATA
-        const data = res.data || [];
-
-        setEncuestas(data);
-
-        setPaginaActual(1);
-
-        Swal.close();
-
-    } catch (error) {
-
-        console.log(error);
-
-        Swal.close();
-
-        // 🔹 MENSAJE DEL BACKEND
-        const mensaje =
-            error.response?.data?.mensaje ||
-            'No se pudo obtener la encuesta';
-
-        Swal.fire(
-            'Error',
-            mensaje,
-            'error'
-        );
-    }
-};
     // 🔹 EXPORTAR EXCEL
     const exportarExcel = () => {
 
@@ -884,12 +838,13 @@ const buscarPorEncuesta = async (idEncuesta) => {
     value={departamentoSeleccionado}
     onChange={(e) => {
 
-        setDepartamentoSeleccionado(
-            e.target.value
-        );
+        const nuevoDepartamento = e.target.value;
 
-        buscarPorDepartamento(
-            e.target.value
+        setDepartamentoSeleccionado(nuevoDepartamento);
+
+        aplicarFiltros(
+            nuevoDepartamento,
+            encuestaSeleccionada
         );
     }}
 >
@@ -924,12 +879,13 @@ const buscarPorEncuesta = async (idEncuesta) => {
         value={encuestaSeleccionada}
         onChange={(e) => {
 
-            setEncuestaSeleccionada(
-                e.target.value
-            );
+            const nuevaEncuesta = e.target.value;
 
-            buscarPorEncuesta(
-                e.target.value
+            setEncuestaSeleccionada(nuevaEncuesta);
+
+            aplicarFiltros(
+                departamentoSeleccionado,
+                nuevaEncuesta
             );
         }}
     >

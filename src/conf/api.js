@@ -1,6 +1,7 @@
 // src/conf/api.js
 
 
+// export const API_BASE = "http://127.0.0.1:8000/api";
 export const API_BASE = "http://192.168.50.108:8004/api";
 
 export const API = {
@@ -50,6 +51,14 @@ export const API = {
 
   getEncuestaDepartamento: (id) =>
     `${API_BASE}/getencuestadepartamento/${id}/`,
+
+  getEncuestaFiltro: (departamento, encuesta) => {
+    const params = new URLSearchParams();
+    if (departamento) params.append("departamento", departamento);
+    if (encuesta) params.append("encuesta", encuesta);
+    const query = params.toString();
+    return `${API_BASE}/getencuestafiltro/${query ? `?${query}` : ""}`;
+  },
 
   getDepartamentos: `${API_BASE}/getdepartamentos/`,
 
