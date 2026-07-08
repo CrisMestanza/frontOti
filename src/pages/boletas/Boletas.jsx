@@ -24,6 +24,11 @@ function obtenerAnio(fecha) {
     return /^\d{4}$/.test(anio) ? anio : "";
 }
 
+function formatMonto(valor) {
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero.toFixed(2) : String(valor ?? "");
+}
+
 function agruparBoletas(rows) {
     const grupos = {};
 
@@ -58,15 +63,9 @@ function agruparBoletas(rows) {
     return Object.values(grupos);
 }
 
-function generarBoletaPDF(boleta) {
-    const anchoTicket = 80;
-    const margenX = 5;
-    const margenDer = anchoTicket - 5;
-    const lineaItem = 8;
-    const altoBase = 110;
-    const alto = altoBase + boleta.items.length * lineaItem;
-
-    const doc = new jsPDF({ unit: "mm", format: [anchoTicket, alto] });
+// Dibuja el ticket completo sobre `doc` y devuelve la posición Y final,
+// para poder medir el alto real antes de generar el PDF definitivo.
+function dibujarBoleta(doc, boleta, anchoTicket, margenX, margenDer) {
     const centro = anchoTicket / 2;
     let y = 8;
 
@@ -75,75 +74,85 @@ function generarBoletaPDF(boleta) {
         y += opts.salto ?? 4;
     };
 
-    const trazo = (doble = false) => {
-        doc.setLineWidth(0.15);
-        doc.line(margenX, y, margenDer, y);
-        if (doble) {
-            y += 0.8;
-            doc.line(margenX, y, margenDer, y);
-        }
-        y += 4;
-    };
-
     const punteado = () => {
         doc.setLineDashPattern([0.8, 0.8], 0);
+        doc.setLineWidth(0.15);
         doc.line(margenX, y, margenDer, y);
         doc.setLineDashPattern([], 0);
         y += 4;
     };
 
-    // ── ENCABEZADO INSTITUCIONAL (estático) ──
+    // Todo el ticket en negrita, igual que el recibo original de la ticketera.
     doc.setFont("courier", "bold");
+
+    // ── ENCABEZADO INSTITUCIONAL (estático) ──
     doc.setFontSize(9.5);
     linea(ENCABEZADO[0]);
 
-    doc.setFont("courier", "normal");
     doc.setFontSize(7.3);
     ENCABEZADO.slice(1).forEach((texto) => linea(texto, { salto: 3.6 }));
 
-    y += 1.5;
-    trazo(true);
-
-    doc.setFont("courier", "bold");
+    y += 6;
     doc.setFontSize(8.5);
-    linea("TESORERÍA - CAJA", { salto: 6 });
+    linea("TESORERÍA-CAJA", { salto: 10 });
 
     doc.setFontSize(9.5);
     linea("RECIBO DE PAGO");
-    doc.setFont("courier", "normal");
-    doc.setFontSize(8.5);
-    linea(boleta.recibo, { salto: 6 });
+    doc.setFontSize(11);
+    linea(boleta.recibo, { salto: 7 });
 
     // ── DATOS DEL CLIENTE ──
     doc.setFontSize(8);
-    const campo = (label, value) => {
-        doc.setFont("courier", "bold");
+    const offsetValor = 24;
+
+    // Campo de una sola línea (valores cortos y de longitud conocida).
+    const campo = (label, value, offset = offsetValor) => {
         doc.text(label, margenX, y);
-        doc.setFont("courier", "normal");
-        doc.text(String(value ?? ""), margenX + 24, y);
-        y += 4.3;
+        doc.text(String(value ?? ""), margenX + offset, y);
     };
 
-    campo("Cliente", boleta.cliente);
+    // Campo que envuelve el texto si no cabe en el ancho del ticket
+    // (evita que nombres/direcciones largas se corten en el margen).
+    const campoMultilinea = (label, value, offset = offsetValor) => {
+        doc.text(label, margenX, y);
+        const anchoDisponible = margenDer - (margenX + offset);
+        const lineas = doc.splitTextToSize(String(value ?? ""), anchoDisponible);
+        doc.text(lineas, margenX + offset, y);
+        y += Math.max(lineas.length, 1) * 4.3;
+    };
+
+    campoMultilinea("Cliente", boleta.cliente);
     campo("Doc. Ident.", ""); // No se muestra el documento en la boleta
-    campo("Direc.", boleta.direccion);
-    campo("Fecha Emis.", boleta.fecha);
-    campo("Hora", boleta.hora);
+    y += 4.3;
+    campo("Direc.", ""); // No se muestra la dirección en la boleta
+    y += 4.3;
+
+    // Fecha Emis. y Hora comparten la misma fila, como en el recibo original.
+    doc.text("Fecha Emis.", margenX, y);
+    doc.text(String(boleta.fecha ?? ""), margenX + offsetValor, y);
+    doc.text("Hora", margenX + 46, y);
+    doc.text(String(boleta.hora ?? ""), margenX + 58, y);
+    y += 4.3;
+
     campo("Moneda", "Soles");
-    y += 1;
+    y += 4;
 
     punteado();
 
-    // ── DETALLE DE ITEMS ──
-    doc.setFont("courier", "bold");
+    // ── DETALLE DE ITEMS (columnas fijas, iguales en encabezado y datos) ──
+    const colCant = margenX;
+    const colUnd = margenX + 14;
+    const colPrecio = margenDer - 20;
+    const colTotal = margenDer;
+
     doc.setFontSize(7.8);
-    doc.text("Cant Und", margenX, y);
-    doc.text("Precio", margenDer - 22, y, { align: "right" });
-    doc.text("Total", margenDer, y, { align: "right" });
+    doc.text("Cant.", colCant, y);
+    doc.text("Und", colUnd, y);
+    doc.text("Precio", colPrecio, y, { align: "right" });
+    doc.text("Total", colTotal, y, { align: "right" });
     y += 3;
     punteado();
 
-    doc.setFont("courier", "normal");
     boleta.items.forEach((item) => {
         doc.setFontSize(7.8);
         const desc = doc.splitTextToSize(String(item.descripcion ?? ""), anchoTicket - margenX * 2);
@@ -151,48 +160,61 @@ function generarBoletaPDF(boleta) {
         y += desc.length * 3.4 + 0.6;
 
         doc.setFontSize(8);
-        doc.text(`${item.cantidad ?? ""} ${item.unidad ?? ""}`, margenX, y);
-        doc.text(String(item.precio ?? ""), margenDer - 22, y, { align: "right" });
-        doc.text(String(item.total ?? ""), margenDer, y, { align: "right" });
+        doc.text(String(item.cantidad ?? ""), colCant, y);
+        doc.text(String(item.unidad ?? ""), colUnd, y);
+        doc.text(formatMonto(item.precio), colPrecio, y, { align: "right" });
+        doc.text(formatMonto(item.total), colTotal, y, { align: "right" });
         y += 4.6;
     });
 
     punteado();
+    y += 2;
 
-    // ── TOTALES ──
-    doc.setFont("courier", "normal");
+    // ── TOTALES (bloque alineado a la derecha, como en el recibo original) ──
     doc.setFontSize(8.5);
-    doc.text("Sub.Total", margenX, y);
-    doc.text(String(boleta.subtotal ?? ""), margenDer, y, { align: "right" });
+    doc.text(`Sub.Total    ${formatMonto(boleta.subtotal)}`, margenDer, y, { align: "right" });
     y += 5;
 
-    doc.setFont("courier", "bold");
-    doc.setFontSize(10);
-    doc.text("TOTAL S/", margenX, y);
-    doc.text(String(boleta.total ?? ""), margenDer, y, { align: "right" });
-    y += 6;
-
-    trazo();
-
-    // ── MONTO EN LETRAS ──
-    doc.setFont("courier", "italic");
-    doc.setFontSize(7.5);
-    const sonTexto = `Son: ${numeroALetras(boleta.total)}`;
-    const lineasSon = doc.splitTextToSize(sonTexto, anchoTicket - margenX * 2);
-    doc.text(lineasSon, margenX, y);
-    y += lineasSon.length * 3.4 + 5;
-
-    // ── PIE ──
-    doc.setFont("courier", "normal");
-    doc.setFontSize(8);
-    doc.text(String(boleta.efectivo ?? ""), margenX, y);
-    y += 4.6;
-    doc.text(`Usuario: ${boleta.usuario ?? ""}`, margenX, y);
+    doc.setFontSize(9.5);
+    doc.text(`TOTAL S/    ${formatMonto(boleta.total)}`, margenDer, y, { align: "right" });
     y += 7;
 
-    doc.setFont("courier", "bold");
+    // ── MONTO EN LETRAS (el "CON" siempre cae al final de la primera línea) ──
+    doc.setFontSize(7.5);
+    const anchoDisponibleSon = anchoTicket - margenX * 2;
+    const [parteEntera, parteDecimal = ""] = numeroALetras(boleta.total).split(" CON ");
+
+    const lineaEntera = doc.splitTextToSize(`Son: ${parteEntera} CON`, anchoDisponibleSon);
+    doc.text(lineaEntera, margenX, y);
+    y += lineaEntera.length * 3.4;
+
+    const lineaDecimal = doc.splitTextToSize(parteDecimal, anchoDisponibleSon);
+    doc.text(lineaDecimal, margenX, y);
+    y += lineaDecimal.length * 3.4 + 5;
+
+    // ── PIE ──
     doc.setFontSize(8);
-    linea("¡Gracias por su pago!", { x: centro, salto: 4 });
+    doc.text(String(boleta.efectivo ?? ""), margenX, y);
+    y += 5;
+    doc.text(`Usuario: ${boleta.usuario ?? ""}`, margenX, y);
+    y += 25;
+
+    return y;
+}
+
+function generarBoletaPDF(boleta) {
+    const anchoTicket = 80;
+    const margenX = 5;
+    const margenDer = anchoTicket - 5;
+
+    // 1) Documento de medición: dibuja el ticket en una hoja alta de sobra
+    //    para averiguar cuánto espacio ocupa realmente el contenido.
+    const medidor = new jsPDF({ unit: "mm", format: [anchoTicket, 400] });
+    const altoReal = dibujarBoleta(medidor, boleta, anchoTicket, margenX, margenDer);
+
+    // 2) Documento final, con el alto exacto (sin sobras ni recortes).
+    const doc = new jsPDF({ unit: "mm", format: [anchoTicket, altoReal] });
+    dibujarBoleta(doc, boleta, anchoTicket, margenX, margenDer);
 
     doc.save(`boleta_${boleta.recibo}.pdf`);
 }
