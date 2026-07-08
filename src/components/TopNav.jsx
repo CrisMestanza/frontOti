@@ -1,9 +1,7 @@
 import styles from './Components.module.css';
-import { useLocation } from "react-router-dom";
+import logoUNSM from "../assets/logo.png";
 
 export default function TopNav() {
-  const location = useLocation();
-
   return (
     <nav className={styles.topNav}>
       <div className={styles.topNavInner}>
@@ -11,7 +9,7 @@ export default function TopNav() {
         {/* LEFT - BRAND */}
         <div className={styles.brandBlock}>
           <img
-            src="src/assets/logo.png"
+            src={logoUNSM}
             alt="UNSM"
             className={styles.logoBig}
           />

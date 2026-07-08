@@ -65,5 +65,10 @@ export const API = {
   getDocente: (dni) =>
     `${API_BASE}/getdocentes/${dni}/`,
 
-  
+  // 🔹 BOLETAS
+  getPeriodoTerm: `${API_BASE}/getperiodo_term/`,
+
+  getBoletas: (idTerm, dni) =>
+    `${API_BASE}/getBoletas/${idTerm}/${dni}/`,
+
 };
