@@ -95,7 +95,7 @@ export default function App() {
         <Route
           path="/boletas"
           element={
-            <ProtectedRoute allowedRoles={["OTI"]}>
+            <ProtectedRoute allowedRoles={["OTI", "CAJA"]}>
               <Boletas />
             </ProtectedRoute>
           }
