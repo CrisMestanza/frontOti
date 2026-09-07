@@ -19,6 +19,7 @@ export const API = {
   cambioBeca: `${API_BASE}/cambioBeca/`,
 
   gmailUpload: `${API_BASE}/gmail/`,
+  gmailProgreso: (jobId) => `${API_BASE}/gmail/progreso/${jobId}/`,
   sendMail: `${API_BASE}/enviar-correo/`,
 
   getApplicationTerms: (periodoId) =>

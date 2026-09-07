@@ -37,6 +37,71 @@ export default function Gmail() {
         if (selected) setFile(selected);
     };
 
+    // 🔹 CONSULTA EL PROGRESO DEL ENVÍO MASIVO HASTA QUE TERMINE
+    const pollGmailProgreso = (jobId, totalInicial) => {
+        return new Promise((resolve) => {
+            const intervalo = setInterval(async () => {
+                try {
+                    const { data } = await axios.get(API.gmailProgreso(jobId));
+
+                    const total = data.total ?? totalInicial ?? 0;
+                    const procesados = data.procesados ?? 0;
+                    const enviados = data.enviados ?? 0;
+                    const fallidos = data.fallidos ?? [];
+                    const actual = data.actual_nombre;
+
+                    Swal.update({
+                        title: 'Enviando correos...',
+                        html: `
+                            <div style="text-align:left">
+                                <p>Procesados: <b>${procesados} / ${total}</b></p>
+                                <p>Enviados: <b>${enviados}</b> &nbsp; Fallidos: <b>${fallidos.length}</b></p>
+                                ${actual ? `<p style="color:#666; font-size:13px;">Actual: ${actual}</p>` : ''}
+                            </div>
+                        `,
+                    });
+
+                    if (data.terminado) {
+                        clearInterval(intervalo);
+                        Swal.close();
+
+                        if (data.error_fatal) {
+                            Swal.fire('Error', data.error_fatal, 'error');
+                            resolve();
+                            return;
+                        }
+
+                        if (fallidos.length === 0) {
+                            Swal.fire('Éxito', `Se enviaron los ${enviados} correos correctamente`, 'success');
+                        } else {
+                            const listaFallidos = fallidos
+                                .map(f => `<li>${f.nombre} (${f.email}) — ${f.motivo}</li>`)
+                                .join('');
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Envío finalizado con errores',
+                                html: `
+                                    <p>Enviados: <b>${enviados}</b> / ${total}</p>
+                                    <p>Fallaron <b>${fallidos.length}</b> correo(s):</p>
+                                    <ul style="text-align:left; max-height:220px; overflow:auto; padding-left:18px;">${listaFallidos}</ul>
+                                `,
+                            });
+                        }
+
+                        resolve();
+                    }
+                } catch (error) {
+                    clearInterval(intervalo);
+                    Swal.close();
+                    console.log(error.response?.data || error);
+                    Swal.fire('Error', 'Se perdió la conexión al consultar el progreso del envío', 'error');
+                    resolve();
+                }
+            }, 1500);
+        });
+    };
+
     // 🔹 SUBIR EXCEL
     const handleUpload = async () => {
         if (!file) {
@@ -48,17 +113,30 @@ export default function Gmail() {
         formData.append("file", file);
 
         try {
-            Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
+            Swal.fire({
+                title: 'Enviando...',
+                html: 'Subiendo archivo...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => Swal.showLoading(),
+            });
 
-            await axios.post(API.gmailUpload, formData);
-
-            Swal.close();
-            Swal.fire('Éxito', 'Correos enviados', 'success');
+            const res = await axios.post(API.gmailUpload, formData);
+            const jobId = res.data.job_id;
 
             setFile(null);
             if (inputRef.current) inputRef.current.value = "";
 
-        } catch {
+            if (!jobId) {
+                Swal.close();
+                Swal.fire('Éxito', res.data.mensaje || 'Correos enviados', 'success');
+                return;
+            }
+
+            await pollGmailProgreso(jobId, res.data.total_filas);
+
+        } catch (error) {
+            console.log(error.response?.data || error);
             Swal.close();
             Swal.fire('Error', 'Error al enviar archivo', 'error');
         }
