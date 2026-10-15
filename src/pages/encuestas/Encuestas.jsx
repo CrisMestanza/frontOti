@@ -210,7 +210,7 @@ const generarPDFGeneral = async () => {
             doc.text(":", 75, y);
 
             doc.setFont("helvetica", "normal");
-            doc.text("2026-I", 78, y);
+            doc.text("2026-II", 78, y);
 
             y += 6;
 
@@ -505,7 +505,7 @@ const generarPDF = async (encuesta) => {
     doc.text(":", 75, y);
 
     doc.setFont("helvetica", "normal");
-    doc.text("2026-I", 78, y);
+    doc.text("2026-II", 78, y);
 
     y += 6;
 
