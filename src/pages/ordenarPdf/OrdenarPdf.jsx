@@ -98,7 +98,7 @@ export default function OrdenarPdf() {
                     <h1 className={styles.titulo}>Ordenar PDF de Caja</h1>
                     <p className={styles.subtitulo}>
                         Sube el PDF generado por el sistema de caja y recibirás las filas ordenadas
-                        por número de comprobante listas para descargar.
+                        por fecha de emisión y número de comprobante listas para descargar.
                     </p>
 
                     <div
