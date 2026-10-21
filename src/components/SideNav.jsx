@@ -14,6 +14,7 @@ export default function SideNav() {
         { icon: 'bar_chart', label: 'Reportes', url: '/reportes', roles: ["OTI"] },
         { icon: 'delete', label: 'Gestionar Pagos', url: '/comedor/pagos', roles: ["OTI"] },
         { icon: 'sort', label: 'Ordenar PDF', url: '/ordenar-pdf', roles: ["OTI", "CAJA"] },
+        { icon: 'event', label: 'Ordenar PDF (Fecha)', url: '/ordenar-pdf-fecha', roles: ["OTI", "CAJA"] },
         { icon: 'receipt_long', label: 'Boletas', url: '/boletas', roles: ["OTI", "CAJA"] },
     ];
 

@@ -9,6 +9,7 @@ import Encuestas from "./pages/encuestas/Encuestas";
 import Login from "./pages/login/Login";
 import Logout from "./pages/logout/Logout";
 import OrdenarPdf from "./pages/ordenarPdf/OrdenarPdf";
+import OrdenarPdfFecha from "./pages/ordenarPdf/OrdenarPdfFecha";
 import Boletas from "./pages/boletas/Boletas";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -87,6 +88,16 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["OTI", "CAJA"]}>
               <OrdenarPdf />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 📄 ORDENAR PDF POR FECHA */}
+        <Route
+          path="/ordenar-pdf-fecha"
+          element={
+            <ProtectedRoute allowedRoles={["OTI", "CAJA"]}>
+              <OrdenarPdfFecha />
             </ProtectedRoute>
           }
         />
