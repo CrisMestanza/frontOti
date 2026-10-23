@@ -729,12 +729,22 @@ useEffect(() => {
     const totalPaginas = Math.ceil(
         encuestasOrdenadas.length / registrosPorPagina
     );
-    // 🔹 EXPORTAR EXCEL
+    // 🔹 EXPORTAR EXCEL (respeta los filtros y el orden aplicados en la tabla)
     const exportarExcel = () => {
 
-        if (encuestas.length === 0) return;
+        if (encuestasOrdenadas.length === 0) {
+            Swal.fire('Sin datos', 'No hay registros para exportar.', 'info');
+            return;
+        }
 
-        const worksheet = XLSX.utils.json_to_sheet(encuestas);
+        const filas = encuestasOrdenadas.map((encuesta) => ({
+            "Codigo": encuesta.UserName || "-",
+            "Docente": encuesta.FullName || "-",
+            "Departamento": encuesta.departamento_academico || "-",
+            "Total": encuesta.puntaje_total ?? 0,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(filas);
 
         const workbook = XLSX.utils.book_new();
 
@@ -786,6 +796,17 @@ useEffect(() => {
 
                     </div>
 
+                 <div className={styles2.heroActions}>
+                 <button
+    onClick={exportarExcel}
+    className={styles2.btnExcel}
+>
+    <span className="material-symbols-outlined">
+        grid_on
+    </span>
+
+    Exportar Excel
+</button>
                  <button
     onClick={generarPDFGeneral}
     className={styles2.btnExcel}
@@ -796,6 +817,7 @@ useEffect(() => {
 
     Exportar PDF
 </button>
+                 </div>
                 </div>
 
                 {/* FILTROS */}

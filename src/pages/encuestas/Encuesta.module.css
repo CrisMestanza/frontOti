@@ -40,6 +40,12 @@
     max-width: 600px;
 }
 
+.heroActions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .btnExcel {
     border: none;
     background: #ffffff;
