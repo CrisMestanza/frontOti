@@ -11,8 +11,6 @@ import logoUNSM from "../../assets/logo.png";
 
 import Swal from 'sweetalert2';
 
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 import { API } from '../../conf/api';
 // 🔹 MAIN COMPONENT
 export default function Encuestas() {
@@ -729,45 +727,74 @@ useEffect(() => {
     const totalPaginas = Math.ceil(
         encuestasOrdenadas.length / registrosPorPagina
     );
-    // 🔹 EXPORTAR EXCEL (respeta los filtros y el orden aplicados en la tabla)
-    const exportarExcel = () => {
+    // 🔹 EXPORTAR TABLA EN PDF (respeta los filtros y el orden aplicados en la tabla)
+    const exportarTablaPDF = () => {
 
         if (encuestasOrdenadas.length === 0) {
             Swal.fire('Sin datos', 'No hay registros para exportar.', 'info');
             return;
         }
 
-        const filas = encuestasOrdenadas.map((encuesta) => ({
-            "Codigo": encuesta.UserName || "-",
-            "Docente": encuesta.FullName || "-",
-            "Departamento": encuesta.departamento_academico || "-",
-            "Total": encuesta.puntaje_total ?? 0,
-        }));
+        const doc = new jsPDF("p", "mm", "a4");
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
 
-        const worksheet = XLSX.utils.json_to_sheet(filas);
+        doc.addImage(logoUNSM, "PNG", 10, 8, 16, 18);
 
-        const workbook = XLSX.utils.book_new();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.setTextColor(6, 95, 70);
+        doc.text("UNIVERSIDAD NACIONAL DE SAN MARTÍN", pageWidth / 2, 14, { align: "center" });
 
-        XLSX.utils.book_append_sheet(
-            workbook,
-            worksheet,
-            "Encuestas"
-        );
+        doc.setFontSize(11);
+        doc.setTextColor(0);
+        doc.text("Centro de Encuestas Docentes", pageWidth / 2, 21, { align: "center" });
 
-        const excelBuffer = XLSX.write(workbook, {
-            bookType: "xlsx",
-            type: "array"
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(100);
+        doc.text(`Generado: ${new Date().toLocaleString()}`, pageWidth / 2, 27, { align: "center" });
+
+        const filas = encuestasOrdenadas.map((encuesta) => ([
+            encuesta.UserName || "-",
+            encuesta.FullName || "-",
+            encuesta.departamento_academico || "-",
+            String(encuesta.puntaje_total ?? 0),
+        ]));
+
+        autoTable(doc, {
+            startY: 32,
+            head: [["Código", "Docente", "Departamento", "Total"]],
+            body: filas,
+            theme: "grid",
+            headStyles: { fillColor: [6, 95, 70], textColor: 255, fontStyle: "bold" },
+            styles: { fontSize: 8, cellPadding: 2 },
+            columnStyles: {
+                0: { cellWidth: 25 },
+                3: { cellWidth: 18, halign: "center" },
+            },
         });
 
-        const blob = new Blob(
-            [excelBuffer],
-            {
-                type:
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            }
-        );
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFontSize(7);
+            doc.setTextColor(120);
+            doc.text(
+                "Universidad Nacional de San Martín - Dirección de Asuntos Académicos",
+                pageWidth / 2,
+                pageHeight - 10,
+                { align: "center" }
+            );
+            doc.text(
+                `Página ${i} de ${totalPages}`,
+                pageWidth / 2,
+                pageHeight - 6,
+                { align: "center" }
+            );
+        }
 
-        saveAs(blob, "encuestas.xlsx");
+        doc.save("encuestas.pdf");
     };
 
     return (
@@ -798,14 +825,14 @@ useEffect(() => {
 
                  <div className={styles2.heroActions}>
                  <button
-    onClick={exportarExcel}
+    onClick={exportarTablaPDF}
     className={styles2.btnExcel}
 >
     <span className="material-symbols-outlined">
-        grid_on
+        table_chart
     </span>
 
-    Exportar Excel
+    Exportar Tabla (PDF)
 </button>
                  <button
     onClick={generarPDFGeneral}
