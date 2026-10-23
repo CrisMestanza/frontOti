@@ -172,3 +172,64 @@
 .swal2-container {
   z-index: 20000 !important;
 }
+
+
+/* ===== RESPONSIVE / MOBILE ===== */
+.tableContainer {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    min-width: 650px;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px 20px;
+        margin-bottom: -20px;
+    }
+
+    .headerLeft {
+        gap: 12px;
+    }
+
+    .headerLeft span {
+        font-size: 22px;
+    }
+
+    .headerTitle {
+        font-size: 20px;
+    }
+
+    .headerSubtitle {
+        font-size: 12px;
+    }
+
+    .searchBox {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchBox input {
+        width: 100%;
+    }
+
+    .searchBox button {
+        width: 100%;
+    }
+
+    .tableContainer {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+}

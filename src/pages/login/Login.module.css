@@ -181,3 +181,46 @@
     opacity: 0;
   }
 }
+
+
+/* ===== RESPONSIVE / MOBILE ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .left {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .right {
+    display: none;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 20px 10px;
+  }
+
+  .logoBox img {
+    width: 100px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .title {
+    font-size: 17px;
+  }
+}
